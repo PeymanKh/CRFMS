@@ -26,6 +26,7 @@ class InsuranceTier:
         TypeError: If any parameter has an incorrect type (tier_name/description must be strings, price_per_day must be numeric).
         ValueError: If price_per_day is negative.
     """
+
     def __init__(self, tier_name: str, description: str, price_per_day: float) -> None:
         # Validations
         if not isinstance(tier_name, str):

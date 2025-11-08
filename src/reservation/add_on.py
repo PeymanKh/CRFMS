@@ -26,6 +26,7 @@ class AddOn:
         TypeError: If any parameter has an incorrect type (name/description must be strings, price_per_day must be numeric).
         ValueError: If price_per_day is negative.
     """
+
     def __init__(self, name: str, description: str, price_per_day: float) -> None:
         # Validations
         if not isinstance(name, str):
@@ -91,4 +92,3 @@ class AddOn:
             raise ValueError("price_per_day cannot be negative")
 
         self.__price_per_day = price_per_day
-
