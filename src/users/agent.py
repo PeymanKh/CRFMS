@@ -7,14 +7,16 @@ Date: 07-11-2025
 """
 
 from datetime import date
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from src.users.employee import Employee
-from src.enums import Gender, EmploymentType
-
+from src.enums import Gender, EmploymentType, VehicleStatus, ReservationStatus
 
 if TYPE_CHECKING:
     from src.branch.branch import Branch
+    from src.vehicle.vehicle import Vehicle
+    from src.reservation.reservation import Reservation
+    from src.vehicle.maintenance_record import MaintenanceRecord
 
 
 class Agent(Employee):
@@ -68,24 +70,74 @@ class Agent(Employee):
             employment_type=employment_type,
         )
 
-    def check_vehicle_availability(self):
-        """Checks is the vehicle is available"""
-        ...
+    @staticmethod
+    def check_vehicle_availability(vehicle: "Vehicle") -> bool:
+        """
+        Checks is the vehicle is available
 
-    def create_maintenance_request(self):
-        """Creates a maintenance request for the car"""
+        Args:
+            vehicle (Vehicle): Vehicle object
 
-    def approve_reservation(self):
-        """Approves the reservation if car is ready for the user to pick up the car"""
-        ...
+        Returns:
+            bool: True if vehicle is available, False otherwise
 
-    def complete_reservation(self):
-        """Completes the reservation when customer picks up the car from branch"""
-        ...
+        Raises:
+            TypeError: If vehicle is not a Vehicle object
+        """
+        # Validation
+        from src.vehicle.vehicle import Vehicle
+        if not isinstance(vehicle, Vehicle):
+            raise TypeError("vehicle must be a Vehicle object")
 
-    def complete_return(self):
-        """Completes the return when customer brings back the car"""
-        ...
+        return vehicle.status == VehicleStatus.AVAILABLE
+
+    @staticmethod
+    def create_maintenance_request(vehicle: "Vehicle", note: Optional[str] =None) -> "MaintenanceRecord":
+        """
+        Creates a maintenance request for the car and adds it to its maintenance records
+
+        Args:
+            vehicle (Vehicle): Vehicle object
+            note (Optional[str]): Note about the maintenance
+
+        Returns:
+            MaintenanceRecord: Created MaintenanceRecord object
+
+        Raises:
+            TypeError: If vehicle is not a Vehicle object
+        """
+        # Validation
+        from src.vehicle.vehicle import Vehicle
+        if not isinstance(vehicle, Vehicle):
+            raise TypeError("vehicle must be a Vehicle object")
+
+        # Create maintenance record
+        from src.vehicle.maintenance_record import MaintenanceRecord
+        maintenance_record = MaintenanceRecord(vehicle=vehicle, note=note)
+
+        return maintenance_record
+
+    def approve_reservation(self, reservation: "Reservation") -> None:
+        """
+        Approves the reservation if a car is ready for the user to pick up the car
+
+        Args:
+            reservation (Reservation): Reservation object
+
+        Raises:
+            TypeError: If reservation is not a Reservation object
+        """
+        # Validation
+        from src.reservation.reservation import Reservation
+        if not isinstance(reservation, Reservation):
+            raise TypeError("reservation must be a Reservation object")
+
+        is_car_available = self.check_vehicle_availability(vehicle=reservation.vehicle)
+
+        if is_car_available:
+            reservation.status = ReservationStatus.APPROVED
+        else:
+            reservation.status = ReservationStatus.CANCELLED
 
     def get_role(self) -> str:
         """Returns role of the user in the application"""

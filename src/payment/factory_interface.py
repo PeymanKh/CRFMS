@@ -9,14 +9,15 @@ Date: 08-11-2025
 from typing import TYPE_CHECKING
 from abc import ABC, abstractmethod
 
-if  TYPE_CHECKING:
+if TYPE_CHECKING:
     from src.payment.product_interface import PaymentInterface
+
 
 class PaymentFactoryInterface(ABC):
     """This class is an abstract implementation of application's payment factory"""
 
     @abstractmethod
-    def create_payment_product(self) -> 'PaymentInterface':
+    def create_payment_product(self) -> "PaymentInterface":
         """Factory method to return a payment object"""
         pass
 

@@ -184,6 +184,7 @@ class Vehicle:
         """
         # Validation
         from src.vehicle.vehicle_class import VehicleClass
+
         if not isinstance(vehicle_class, VehicleClass):
             raise TypeError("vehicle_class must be a VehicleClass object")
 
@@ -445,17 +446,19 @@ class Vehicle:
 
         Raises:
             TypeError: If maintenance_records is not a list.
-            ValueError: If all items in maintenance_records list are not MaintenanceRecord objects.
+            ValueError: If all items in the maintenance_records list are not MaintenanceRecord objects.
         """
         from src.vehicle.maintenance_record import MaintenanceRecord
 
         if not isinstance(maintenance_records, list):
             raise TypeError("maintenance_records must be a list")
         if not all(
-                isinstance(maintenance_record, MaintenanceRecord)
-                for maintenance_record in maintenance_records
+            isinstance(maintenance_record, MaintenanceRecord)
+            for maintenance_record in maintenance_records
         ):
-            raise TypeError("All maintenance records must be an instances of MaintenanceRecord class")
+            raise TypeError(
+                "All maintenance records must be an instances of MaintenanceRecord class"
+            )
 
         self.__maintenance_records = maintenance_records.copy()
 

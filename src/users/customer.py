@@ -9,12 +9,15 @@ Date: 30-10-2025
 from datetime import date
 from typing import Any, Optional, List, TYPE_CHECKING
 
-from src.enums import Gender
 from src.users.base_user import BaseUser
-
+from src.enums import Gender, ReservationStatus, VehicleStatus
 
 if TYPE_CHECKING:
     from src.branch.branch import Branch
+    from src.vehicle.vehicle import Vehicle
+    from src.reservation.add_on import AddOn
+    from src.reservation.reservation import Reservation
+    from src.reservation.insurance_tier import InsuranceTier
 
 
 class Customer(BaseUser):
@@ -63,40 +66,215 @@ class Customer(BaseUser):
             if not isinstance(reservations, list):
                 raise ValueError("reservations must be a list.")
             # Validate all items in the list are Employee instances
-            from src.users.employee import Employee  # To avoid circular import
+            from src.reservation.reservation import (
+                Reservation,
+            )  # To avoid circular import
 
             if not all(
-                isinstance(reservation, Employee) for reservation in reservations
+                isinstance(reservation, Reservation) for reservation in reservations
             ):
-                raise ValueError("All employees must be instances of Employee class.")
+                raise ValueError(
+                    "all reservations must be instances of Reservation class"
+                )
 
         # Assign reservations
         self.__reservations = reservations
 
     @property
-    def reservations(self):
+    def reservations(self) -> List["Reservation"]:
         """Getter method for reservations."""
         return self.__reservations
 
-    def get_reservations(self):
+    def get_reservations(self) -> List["Reservation"]:
         """Returns all reservations created by the customer"""
         return self.__reservations
 
-    def create_reservation(self):
-        """Creates a new reservation and adds it to the customer reservations"""
-        ...
+    def create_reservation(
+        self,
+        vehicle: "Vehicle",
+        insurance_tier: "InsuranceTier",
+        pickup_branch: "Branch",
+        return_branch: "Branch",
+        pickup_date: date,
+        return_date: date,
+        add_ons: Optional[List["AddOn"]] = None,
+    ) -> "Reservation":
+        """
+        Creates a new reservation and adds it to the customer's reservations.
 
-    def cancel_reservation(self):
-        """Cancel the reservation if it was created by the user."""
-        ...
+        Args:
+            vehicle (Vehicle): The vehicle to reserve.
+            insurance_tier (InsuranceTier): The insurance tier for the reservation.
+            pickup_branch (Branch): The branch where the vehicle will be picked up.
+            return_branch (Branch): The branch where the vehicle will be returned.
+            pickup_date (date): The date when the vehicle will be picked up.
+            return_date (date): The date when the vehicle will be returned.
+            add_ons (Optional[List[AddOn]]): Optional list of add-ons. Defaults to None.
 
-    def pickup_vehicle(self):
-        """"""
-        ...
+        Returns:
+            Reservation: The newly created reservation.
 
-    def return_vehicle(self):
-        """"""
-        ...
+        Raises:
+            TypeError: If any parameter has an incorrect type.
+            ValueError: If dates violate business constraints.
+        """
+        from src.reservation.reservation import Reservation
+
+        # Change vehicle status to RESERVED
+        vehicle.reserve()
+
+        # Create new reservation with PENDING status
+        new_reservation = Reservation(
+            status=ReservationStatus.PENDING,
+            creator=self,
+            vehicle=vehicle,
+            insurance_tier=insurance_tier,
+            pickup_branch=pickup_branch,
+            return_branch=return_branch,
+            pickup_date=pickup_date,
+            return_date=return_date,
+            add_ons=add_ons,
+        )
+
+        # Add to customer's reservations
+        self.__reservations.append(new_reservation)
+
+        return new_reservation
+
+    def cancel_reservation(self, reservation_id: str) -> None:
+        """
+        Cancel a reservation if it belongs to the customer.
+
+        Changes the reservation status to CANCELLED. Only reservations with
+        PENDING or CONFIRMED status can be canceled.
+
+        Args:
+            reservation_id (str): The unique ID of the reservation to cancel.
+
+        Raises:
+            TypeError: If reservation_id is not a string.
+            ValueError: If reservation_id is empty, reservation is not found,
+                or reservation cannot be canceled (already active, completed, or canceled).
+        """
+        # Validate reservation_id
+        if not isinstance(reservation_id, str):
+            raise TypeError("reservation_id must be a string.")
+        if not reservation_id:
+            raise ValueError("reservation_id cannot be empty.")
+
+        # Find the reservation
+        reservation = None
+        for res in self.__reservations:
+            if res.id == reservation_id:
+                reservation = res
+                break
+
+        # Check if reservation exists
+        if reservation is None:
+            raise ValueError("Reservation with the given ID is not found.")
+
+        # Check if reservation can be canceled
+        if reservation.status == ReservationStatus.CANCELLED:
+            raise ValueError("Reservation is already cancelled.")
+        if reservation.status == ReservationStatus.COMPLETED:
+            raise ValueError("Cannot cancel a completed reservation.")
+        if reservation.status == ReservationStatus.PICKED_UP:
+            raise ValueError(
+                "Cannot cancel an active reservation. Please return the vehicle first."
+            )
+
+        # Cancel the reservation
+        reservation.status = ReservationStatus.CANCELLED
+        # Change vehicle status to AVAILABLE
+        reservation.vehicle.status = VehicleStatus.AVAILABLE
+
+    def pickup_vehicle(self, reservation_id: str) -> None:
+        """
+        Mark a vehicle as picked up for a confirmed reservation.
+
+        Changes the reservation status to ACTIVE and the vehicle status to PICKED_UP.
+        Only reservations with CONFIRMED status can be picked up.
+
+        Args:
+            reservation_id (str): The unique ID of the reservation.
+
+        Raises:
+            TypeError: If reservation_id is not a string.
+            ValueError: If reservation_id is empty, reservation is not found,
+                or reservation status is not CONFIRMED.
+        """
+        from src.enums import ReservationStatus, VehicleStatus
+
+        # Validate reservation_id
+        if not isinstance(reservation_id, str):
+            raise TypeError("reservation_id must be a string.")
+        if not reservation_id:
+            raise ValueError("reservation_id cannot be empty.")
+
+        # Find the reservation
+        reservation = None
+        for res in self.__reservations:
+            if res.id == reservation_id:
+                reservation = res
+                break
+
+        # Check if reservation exists
+        if reservation is None:
+            raise ValueError("Reservation with the given ID is not found.")
+
+        # Check if reservation can be picked up
+        if reservation.status != ReservationStatus.APPROVED:
+            raise ValueError("Only confirmed reservations can be picked up.")
+
+        # Update reservation status to ACTIVE
+        reservation.status = ReservationStatus.PICKED_UP
+
+        # Update vehicle status to PICKED_UP
+        reservation.vehicle.status = VehicleStatus.PICKED_UP
+
+    def return_vehicle(self, reservation_id: str) -> None:
+        """
+        Mark a vehicle as returned for an active reservation.
+
+        Changes the reservation status to COMPLETED and the vehicle status to AVAILABLE.
+        Only reservations with ACTIVE status can be returned.
+
+        Args:
+            reservation_id (str): The unique ID of the reservation.
+
+        Raises:
+            TypeError: If reservation_id is not a string.
+            ValueError: If reservation_id is empty, reservation is not found,
+                or reservation status is not ACTIVE.
+        """
+        from src.enums import ReservationStatus, VehicleStatus
+
+        # Validate reservation_id
+        if not isinstance(reservation_id, str):
+            raise TypeError("reservation_id must be a string.")
+        if not reservation_id:
+            raise ValueError("reservation_id cannot be empty.")
+
+        # Find the reservation
+        reservation = None
+        for res in self.__reservations:
+            if res.id == reservation_id:
+                reservation = res
+                break
+
+        # Check if reservation exists
+        if reservation is None:
+            raise ValueError("Reservation with the given ID is not found.")
+
+        # Check if vehicle can be returned
+        if reservation.status != ReservationStatus.PICKED_UP:
+            raise ValueError("Only active reservations can be returned.")
+
+        # Update reservation status to COMPLETED
+        reservation.status = ReservationStatus.COMPLETED
+
+        # Update vehicle status to AVAILABLE
+        reservation.vehicle.status = VehicleStatus.AVAILABLE
 
     def get_role(self) -> str:
         """Returns role of the user in the application"""

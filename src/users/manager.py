@@ -1,5 +1,5 @@
 """
-This module implements VehicleClass class.
+This module implements Manager class.
 It is a concrete class and can directly initialize in the app.
 
 Author: Peyman Khodabandehlouei
@@ -12,9 +12,10 @@ from typing import Any, TYPE_CHECKING
 from src.users.employee import Employee
 from src.enums import Gender, EmploymentType
 
-
 if TYPE_CHECKING:
     from src.branch.branch import Branch
+    from src.vehicle.vehicle import Vehicle
+    from src.vehicle.maintenance_record import MaintenanceRecord
 
 
 class Manager(Employee):
@@ -22,6 +23,18 @@ class Manager(Employee):
     Concrete class representing a Manager in the application.
 
     Args:
+        first_name (str): First name of the manager.
+        last_name (str): Last name of the manager.
+        gender (Gender): Gender of the manager.
+        birth_date (date): Birth date of the manager (must be >= 18 years ago).
+        email (str): Email address of the manager.
+        address (str): Home address of the manager.
+        phone_number (str): Phone number of the manager.
+        branch (Branch): Branch where the manager works.
+        is_active (bool): Whether the manager is active.
+        salary (float): Salary of the manager.
+        hire_date (date): Hire date of the manager.
+        employment_type (EmploymentType): Employment type (full-time, part-time, contract).
     """
 
     def __init__(
@@ -56,21 +69,58 @@ class Manager(Employee):
             employment_type=employment_type,
         )
 
-    def register_new_vehicle(self):
-        """Adds new vehicle to the branch vehicles"""
-        ...
+    @staticmethod
+    def get_vehicle_information(vehicle: "Vehicle") -> dict[str, Any]:
+        """
+        Returns information of a vehicle
 
-    def remove_vehicle(self):
-        """Removes a vehicle from branch vehicles"""
-        ...
+        Args:
+            vehicle (Vehicle): Vehicle object
 
-    def get_vehicle_information(self):
-        """Returns information of a vehicle"""
-        ...
+        Returns:
+            dict[str, Any]: Dictionary containing vehicle information
 
-    def approve_maintenance(self):
-        """Approves the maintenance request created by an agent"""
-        ...
+        Raises:
+            TypeError: If vehicle is not a Vehicle object
+        """
+        # Validate
+        from src.vehicle.vehicle import Vehicle
+        if not isinstance(vehicle, Vehicle):
+            raise TypeError("vehicle must be a Vehicle object")
+
+        return {
+            "vehicle_id": vehicle.id,
+            "vehicle_type": vehicle.vehicle_class.name,
+            "vehicle_status": vehicle.status,
+            "vehicle_brand": vehicle.brand,
+            "vehicle_model": vehicle.model,
+            "vehicle_color": vehicle.color,
+            "vehicle_licence_plate": vehicle.licence_plate,
+            "vehicle_fuel_level": vehicle.fuel_level,
+            "vehicle_odometer": vehicle.odometer,
+            "vehicle_last_service_odometer": vehicle.last_service_odometer,
+            "vehicle_price_per_day": vehicle.price_per_day,
+            "vehicle_maintenance_records": vehicle.maintenance_records,
+        }
+
+    @staticmethod
+    def approve_maintenance(maintenance_record: "MaintenanceRecord") -> None:
+        """
+        Approves the maintenance request created by an agent
+
+        Args:
+            maintenance_record (MaintenanceRecord): maintenance record to approve
+
+        Raises:
+            TypeError: If maintenance_record is not a MaintenanceRecord object
+        """
+        # Validate
+        from src.vehicle.maintenance_record import MaintenanceRecord
+        if not isinstance(maintenance_record, MaintenanceRecord):
+            raise TypeError("maintenance_record must be a MaintenanceRecord object")
+
+        # Approve the maintenance request
+        maintenance_record.vehicle.move_to_maintenance()
 
     def get_role(self) -> str:
         """Returns role of the user in the application"""

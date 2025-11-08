@@ -11,6 +11,7 @@ from src.payment.product_interface import PaymentInterface
 
 class CreditcardPayment(PaymentInterface):
     """Concrete implementation of creditcard payment product"""
+
     def __init__(self, card_number: str, cvv: str, expiry: str):
         """
         Constructor for CreditcardPayment.

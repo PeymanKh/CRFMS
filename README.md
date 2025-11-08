@@ -25,8 +25,14 @@ The main goal of this project is to create a CRFMS system with respect to SOLID 
     Vehicle (Concrete)
     MaintenanceRecord (Concrete)
     ```
+4. **Reservation, AddOn, and InsuranceTier**: [Reservation](src/reservation/reservation.py), [AddOn](src/reservation/add_on.py), and [InsuranceTier](src/reservation/insurance_tier.py) classes are also normal concrete classes that can be initialized during the run time, I could implement `Decorator design pattern` for this part, but due to time limitations, I could not. But for later development Decorator is a well-suited design pattern for this part of the application.
+    ```
+    Reservation (Concrete)
+    AddOn (Concrete)
+    InsuranceTier (Concrete)
+    ```
    
-4. **Pricing Strategy:** for pricing strategy, I have used `Strategy design pattern` so that we can easily add new pricing strategies without changing the code. For now there are 3 pricing strategies: normal price calculation, 10% off on first reservation, and 15% off on each five reservations. The implementation has a [pricing strategy interface](src/pricing_strategy/strategy_interface.py), [concrete strategies](src/pricing_strategy/concrete_strategies.py), and [pricing strategy](src/pricing_strategy/pricing_strategy.py) which decides which strategy to use.
+5. **Pricing Strategy:** for pricing strategy, I have used `Strategy design pattern` so that we can easily add new pricing strategies without changing the code. For now there are 3 pricing strategies: normal price calculation, 15% off on first reservation, and 10% off on each five reservations. The implementation has a [pricing strategy interface](src/pricing_strategy/strategy_interface.py), [concrete strategies](src/pricing_strategy/concrete_strategies.py), and [pricing strategy](src/pricing_strategy/pricing_strategy.py) which decides which strategy to use.
     ```
     StrategyInterface (Abstract Strategy)
     ├── DailyPricingStrategy (Concrete Strategy)
@@ -36,7 +42,7 @@ The main goal of this project is to create a CRFMS system with respect to SOLID 
     PricingStrategy (Concrete Context)
     ```
    
-5. **Payment:** For payments, I have used `Factory design pattern` since we have creditcard and PayPal right now, but we might add cryptocurrency payment later or other providers such as Stripe. I have defined a [product interface](src/payment/product_interface.py), [concrete products](src/payment/concrete_products.py), [factory interface](src/payment/factory_interface.py), and finally [concrete factories](src/payment/concrete_factories.py). With Factory pattern, we are always open to new payment methods without changing the code we already have.
+6. **Payment:** For payments, I have used `Factory design pattern` since we have creditcard and PayPal right now, but we might add cryptocurrency payment later or other providers such as Stripe. I have defined a [product interface](src/payment/product_interface.py), [concrete products](src/payment/concrete_products.py), [factory interface](src/payment/factory_interface.py), and finally [concrete factories](src/payment/concrete_factories.py). With Factory pattern, we are always open to new payment methods without changing the code we already have.
     ```
     PaymentInterface (Abstract Product)
     ├── CreditCard (Concrete Product)

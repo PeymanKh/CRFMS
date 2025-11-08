@@ -23,8 +23,10 @@ class CreditCardPaymentCreator(PaymentFactoryInterface):
         self.cvv = cvv
         self.expiry = expiry
 
-    def create_payment_product(self) -> 'PaymentInterface':
-        return CreditcardPayment(card_number=self.card_number, cvv=self.cvv, expiry=self.expiry)
+    def create_payment_product(self) -> "PaymentInterface":
+        return CreditcardPayment(
+            card_number=self.card_number, cvv=self.cvv, expiry=self.expiry
+        )
 
 
 class PaypalPaymentCreator(PaymentFactoryInterface):
@@ -34,5 +36,5 @@ class PaypalPaymentCreator(PaymentFactoryInterface):
         self.email = email
         self.auth_token = auth_token
 
-    def create_payment_product(self) -> 'PaymentInterface':
+    def create_payment_product(self) -> "PaymentInterface":
         return PayPalPayment(email=self.email, auth_token=self.auth_token)

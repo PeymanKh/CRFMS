@@ -29,13 +29,14 @@ class MaintenanceRecord:
         note (Optional[str]): Optional note about the maintenance.
 
     Raises:
-        TypeError: If vehicle is not a Vehicle instance or note is not a string.
+        TypeError: If vehicle is not a Vehicle instance, or note is not a string.
     """
 
     def __init__(self, vehicle: "Vehicle", note: Optional[str] = None):
         """Constructor for the maintenance record"""
         # Validate vehicle
         from src.vehicle.vehicle import Vehicle  # To avoid circular import
+
         if not isinstance(vehicle, Vehicle):
             raise TypeError("vehicle must be a Vehicle object")
 
@@ -74,6 +75,7 @@ class MaintenanceRecord:
         """
         # Validation
         from src.vehicle.vehicle import Vehicle  # To avoid circular import
+
         if not isinstance(vehicle, Vehicle):
             raise TypeError("vehicle must be a Vehicle object")
 

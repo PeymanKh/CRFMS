@@ -28,4 +28,15 @@ class VehicleStatus(Enum):
 
     AVAILABLE = "available"
     RESERVED = "reserved"
+    PICKED_UP = "picked_up"
     OUT_OF_SERVICE = "out_of_service"
+
+
+class ReservationStatus(Enum):
+    """reservation status type enumeration."""
+
+    PENDING = "pending"
+    APPROVED = "approved"
+    PICKED_UP = "picked_up"
+    CANCELLED = "cancelled"
+    COMPLETED = "completed"
