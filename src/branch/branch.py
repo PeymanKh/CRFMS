@@ -27,6 +27,14 @@ class Branch:
         phone_number (str): Phone number of the branch.
         employees (Optional[List[Employee]]): List of employees working in the branch.
             Defaults to an empty list if not provided.
+
+    Raises:
+        TypeError: If name is not a string.
+        TypeError: If city is not a string.
+        TypeError: If address is not a string.
+        TypeError: If phone_number is not a string.
+        TypeError: If employees is not a list.
+        TypeError: If any employee is not an instance of Employee class.
     """
 
     def __init__(
@@ -40,40 +48,32 @@ class Branch:
         """Constructor method for Branch class."""
         # Validate name
         if not isinstance(name, str):
-            raise TypeError("Name must be a string.")
-        if name == "":
-            raise ValueError("Name cannot be empty.")
+            raise TypeError("name must be a string.")
 
         # Validate city
         if not isinstance(city, str):
-            raise TypeError("City must be a string.")
-        if city == "":
-            raise ValueError("City cannot be empty.")
+            raise TypeError("city must be a string.")
 
         # Validate address
         if not isinstance(address, str):
-            raise TypeError("Address must be a string.")
-        if address == "":
-            raise ValueError("Address cannot be empty.")
+            raise TypeError("address must be a string.")
 
         # Validate phone_number
         if not isinstance(phone_number, str):
-            raise TypeError("Phone number must be a string.")
-        if phone_number == "":
-            raise ValueError("Phone number cannot be empty.")
+            raise TypeError("phone_number must be a string.")
 
         # Validate employees
         if employees is None:
             employees = []
-        else:
-            # Validate employee is a list
-            if not isinstance(employees, list):
-                raise ValueError("employees must be a list.")
-            # Validate all items in the list are Employee instances
-            from src.users.employee import Employee  # To avoid circular import
 
-            if not all(isinstance(employee, Employee) for employee in employees):
-                raise ValueError("All employees must be instances of Employee class.")
+        # Validate employee is a list
+        if not isinstance(employees, list):
+            raise TypeError("employees must be a list.")
+        # Validate all items in the list are Employee instances
+        from src.users.employee import Employee  # To avoid circular import
+
+        if not all(isinstance(employee, Employee) for employee in employees):
+            raise TypeError("all employees must be instances of Employee class.")
 
         # Assign values
         self.__id = str(uuid.uuid4())
@@ -81,7 +81,7 @@ class Branch:
         self.__city = city
         self.__address = address
         self.__phone_number = phone_number
-        self.__employees = employees
+        self.__employees = employees.copy()
 
     @property
     def id(self) -> str:
@@ -98,16 +98,22 @@ class Branch:
         return self.__name
 
     @name.setter
-    def name(self, new_name) -> None:
-        """Setter method for name property."""
+    def name(self, name: str) -> None:
+        """
+        Setter method for name property.
+
+        Args:
+            name (str): Name of the branch.
+
+        Raises:
+            TypeError: If name is not a string.
+        """
         # Validation
-        if not isinstance(new_name, str):
-            raise TypeError("Name must be a string.")
-        if new_name == "":
-            raise ValueError("Name cannot be empty.")
+        if not isinstance(name, str):
+            raise TypeError("name must be a string.")
 
         # Business logic
-        self.__name = new_name
+        self.__name = name
 
     @property
     def city(self) -> str:
@@ -115,16 +121,22 @@ class Branch:
         return self.__city
 
     @city.setter
-    def city(self, new_city) -> None:
-        """Setter method for city property."""
+    def city(self, city: str) -> None:
+        """
+        Setter method for city property.
+
+        Args:
+            city (str): City of the branch.
+
+        Raises:
+            TypeError: If city is not a string.
+        """
         # Validation
-        if not isinstance(new_city, str):
-            raise TypeError("City must be a string.")
-        if new_city == "":
-            raise ValueError("City cannot be empty.")
+        if not isinstance(city, str):
+            raise TypeError("city must be a string.")
 
         # Business logic
-        self.__city = new_city
+        self.__city = city
 
     @property
     def address(self) -> str:
@@ -132,16 +144,22 @@ class Branch:
         return self.__address
 
     @address.setter
-    def address(self, new_address) -> None:
-        """Setter method for address property"""
+    def address(self, address: str) -> None:
+        """
+        Setter method for address property
+
+        Args:
+            address (str): Address of the branch.
+
+        Raises:
+            TypeError: If address is not a string.
+        """
         # Validation
-        if not isinstance(new_address, str):
-            raise TypeError("Address must be a string.")
-        if new_address == "":
-            raise ValueError("Address cannot be empty.")
+        if not isinstance(address, str):
+            raise TypeError("address must be a string.")
 
         # Business logic
-        self.__address = new_address
+        self.__address = address
 
     @property
     def phone_number(self) -> str:
@@ -149,21 +167,27 @@ class Branch:
         return self.__phone_number
 
     @phone_number.setter
-    def phone_number(self, new_phone_number) -> None:
-        """Setter method for phone_number property."""
+    def phone_number(self, phone_number: str) -> None:
+        """
+        Setter method for phone_number property
+
+        Args:
+            phone_number (str): New phone number of the branch.
+
+        Raises:
+            TypeError: If phone_number is not a string.
+        """
         # Validation
-        if not isinstance(new_phone_number, str):
-            raise TypeError("Phone number must be a string.")
-        if new_phone_number == "":
-            raise ValueError("Phone number cannot be empty.")
+        if not isinstance(phone_number, str):
+            raise TypeError("phone_number must be a string.")
 
         # Business logic
-        self.__phone_number = new_phone_number
+        self.__phone_number = phone_number
 
     @property
     def employees(self) -> List["Employee"]:
         """Getter method for employees"""
-        return self.__employees
+        return self.__employees.copy()
 
     @employees.setter
     def employees(self, new_employees: List["Employee"]) -> None:
@@ -174,15 +198,11 @@ class Branch:
             new_employees (List[Employee]): A list of Employee instances.
 
         Raises:
-            ValueError: If new_employees is not a list.
-            TypeError: If any item is not an Employee instance.
+            TypeError: If new_employees is not a list or if employees items are not instances of Employee.
         """
         # Validation
         if not isinstance(new_employees, list):
-            raise ValueError("Employees must be a list.")
-
-        if len(new_employees) == 0:
-            raise ValueError("Employees list cannot be empty.")
+            raise TypeError("employees must be a list.")
 
         from src.users.employee import Employee  # To avoid circular import
 
@@ -190,7 +210,7 @@ class Branch:
             raise TypeError("All employees must be instances of Employee class.")
 
         # Business logic
-        self.__employees = new_employees
+        self.__employees = new_employees.copy()
 
     def has_employee(self, employee_id: str) -> bool:
         """
@@ -199,15 +219,17 @@ class Branch:
         Args:
             employee_id (str): The unique ID of the employee to search for.
 
-        Returns:
-            bool: True if an employee matching the criteria is found, False otherwise.
-
         Raises:
-            ValueError: If no search criteria are provided.
+            TypeError: If employee_id is not a string.
+            ValueError: If employee_id is empty.
         """
-        if not employee_id:
-            raise ValueError("Employee ID is required.")
+        # Validation
+        if not isinstance(employee_id, str):
+            raise TypeError("Employee ID must be a string.")
+        if not employee_id:  # Now specifically for empty string
+            raise ValueError("Employee ID cannot be empty.")
 
+        # Logic
         return any(emp.id == employee_id for emp in self.__employees)
 
     def add_employee(self, employee: "Employee") -> None:
@@ -218,13 +240,14 @@ class Branch:
             employee (Employee): The employee to add.
 
         Raises:
-            ValueError: If the employee is already in the branch.
+            TypeError: If employee is not an instance of Employee.
+            ValueError: If employee already exists in the employees list.
         """
         # Validate employee is an instance of Employee class
         from src.users.employee import Employee  # To avoid circular import
 
         if not isinstance(employee, Employee):
-            raise ValueError("Employee must be an instance of Employee class.")
+            raise TypeError("Employee must be an instance of Employee class.")
 
         # Validate if employee is not already working in the branch
         if any(emp.id == employee.id for emp in self.__employees):
@@ -240,11 +263,12 @@ class Branch:
             employee_id (str): The unique ID of the employee to remove.
 
         Raises:
-            ValueError: If no employee with the given ID is found.
+            TypeError: If employee_id is not a string.
+            ValueError: employee is not found in the employees list.
         """
         # Validate employee_id is a string
         if not isinstance(employee_id, str):
-            raise ValueError("Employee ID must be a string.")
+            raise TypeError("Employee ID must be a string.")
 
         # Check if employee exists in the branch
         if not self.has_employee(employee_id):

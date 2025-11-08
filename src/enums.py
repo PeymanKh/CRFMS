@@ -29,4 +29,3 @@ class VehicleStatus(Enum):
     AVAILABLE = "available"
     RESERVED = "reserved"
     OUT_OF_SERVICE = "out_of_service"
-
