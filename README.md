@@ -25,3 +25,13 @@ The main goal of this project is to create a CRFMS system with respect to SOLID 
     Vehicle (Concrete)
     MaintenanceRecord (Concrete)
     ```
+4. **Payment:** For payments, I have used `Factory design pattern` since we have creditcard and PayPal right now, but we might add cryptocurrency payment later or other providers such as Stripe. I have defined a [product interface](src/payment/product_interface.py), [concrete products](src/payment/concrete_products.py), [factory interface](src/payment/factory_interface.py), and finally [concrete factories](src/payment/concrete_factories.py). With Factory pattern, we are always open to new payment methods without changing the code we already have.
+    ```
+    PaymentInterface (Abstract Product)
+    CreditCard (Concrete Product)
+    PayPal (Concrete Product)
+   
+    PaymentFactoryInterface (Abstract Factory)
+    CreditCardFactory (Concrete Factory)
+    PayPalFactory (Concrete Factory)
+    ```

@@ -5,6 +5,7 @@ from src.enums import Gender, EmploymentType
 from src.users.agent import Agent
 from src.users.manager import Manager
 from src.branch.branch import Branch
+from src.payment.concrete_factories import CreditCardPaymentCreator
 
 branch1 = Branch(
     name="Main Branch",
@@ -28,5 +29,11 @@ agent1= Agent(
     employment_type=EmploymentType.FULL_TIME
 )
 
-print(agent1.complete_return())
+payment_service = CreditCardPaymentCreator(
+    card_number="4000000000000002",
+    cvv="123",
+    expiry="12/25"
+)
 
+receipt = payment_service.execute_payment(3000)
+print(receipt)

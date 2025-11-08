@@ -13,7 +13,11 @@ from src.users.employee import Employee
 from src.enums import Gender, EmploymentType
 
 
-class VehicleClass(Employee):
+if TYPE_CHECKING:
+    from src.branch.branch import Branch
+
+
+class Manager(Employee):
     """
     Concrete class representing a Manager in the application.
 
