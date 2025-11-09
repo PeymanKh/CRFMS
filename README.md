@@ -73,5 +73,7 @@ The main goal of this project is to create a CRFMS system with respect to SOLID 
 3. Run `python main.py` to start the application.
 
 > Note: [main.py](main.py) is a simple demonstration of the application. It creates a `Branch`, `Customer`, `Agent`, `VehicleClass`, and `Vehicle`. Then the customer created a `Reservation` and the application sends a notification to both customer and the agent, and after agent approves the reservation, customer pays the invoice successfully.
-> To keep main.py clean, I have implemented object creation classes in [utils.py](utils.py) so [main.py](main.py) stays clean with the focus on application logic.
+> To keep main.py clean, I have implemented object creation classes in [utils.py](src/utils.py) so [main.py](main.py) stays clean with the focus on application logic.
 
+Here is a screenshot of the application:
+![Output](uml/output.png)
