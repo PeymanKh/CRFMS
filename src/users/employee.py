@@ -100,6 +100,9 @@ class Employee(BaseUser, ABC):
         self.__hire_date = hire_date
         self.__employment_type = employment_type
 
+        # Add employee to the branch
+        branch.add_employee(self)
+
     @property
     def branch(self) -> "Branch":
         """Getter method for branch property."""

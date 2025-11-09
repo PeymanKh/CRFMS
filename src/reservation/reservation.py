@@ -515,3 +515,7 @@ class Reservation:
             return_date=self.__return_date,
             add_ons=self.__add_ons,
         )
+
+    def __str__(self):
+        """String representation of the Reservation object."""
+        return f"Reservation(id={self.id}, status={self.status}, creator={self.creator}, vehicle={self.vehicle}, insurance_tier={self.insurance_tier}, pickup_branch={self.pickup_branch}, return_branch={self.return_branch}, pickup_date={self.pickup_date}, return_date={self.return_date}, add_ons={self.add_ons}, total_price={self.total_price})"

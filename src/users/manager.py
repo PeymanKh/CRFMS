@@ -181,3 +181,7 @@ class Manager(Employee):
                 "saturday": "off",
                 "sunday": "off",
             }
+
+    def __str__(self):
+        """Returns a string representation of the manager"""
+        return f"Employee(Role: {self.get_role().title()}, Name: {self.first_name.title()} {self.last_name.title()}, Gender: {self.gender.title()}, Branch: {self.branch.id})"

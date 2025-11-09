@@ -275,3 +275,7 @@ class Branch:
             raise ValueError("Employee with the given ID is not found.")
 
         self.__employees = [emp for emp in self.__employees if emp.id != employee_id]
+
+    def __str__(self):
+        """String representation of the Branch object."""
+        return f"Branch(id={self.__id}, name={self.__name}, city={self.__city}, address={self.__address}, phone_number={self.__phone_number}, employees={self.__employees})"

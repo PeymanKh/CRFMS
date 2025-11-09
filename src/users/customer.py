@@ -292,3 +292,7 @@ class Customer(BaseUser):
             "address": self.address,
             "reservations": self.__reservations,
         }
+
+    def __str__(self):
+        """Returns a string representation of the customer"""
+        return f"Customer(Name: {self.first_name.title()} {self.last_name.title()}, Gender: {self.gender.title()}, Role: {self.get_role().title()})"

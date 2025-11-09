@@ -224,3 +224,7 @@ class VehicleClass:
 
         # Logic
         return feature in self.__features
+
+    def __str__(self):
+        """String representation of the VehicleClass"""
+        return f"VehicleClass(name={self.__name}, description={self.__description}, base_daily_rate={self.__base_daily_rate}, features={self.__features})"

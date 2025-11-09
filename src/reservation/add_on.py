@@ -92,3 +92,7 @@ class AddOn:
             raise ValueError("price_per_day cannot be negative")
 
         self.__price_per_day = price_per_day
+
+    def __str__(self):
+        """String representation of the AddOn object."""
+        return f"AddOn(name={self.__name}, description={self.__description}, price_per_day={self.__price_per_day})"

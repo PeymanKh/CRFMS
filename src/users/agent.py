@@ -89,7 +89,9 @@ class Agent(Employee):
         if not isinstance(vehicle, Vehicle):
             raise TypeError("vehicle must be a Vehicle object")
 
-        return vehicle.status == VehicleStatus.AVAILABLE
+        if vehicle.status == VehicleStatus.OUT_OF_SERVICE:
+            return False
+        return True
 
     @staticmethod
     def create_maintenance_request(vehicle: "Vehicle", note: Optional[str] =None) -> "MaintenanceRecord":
@@ -198,3 +200,7 @@ class Agent(Employee):
                 "saturday": "off",
                 "sunday": "off",
             }
+
+    def __str__(self):
+        """Returns a string representation of the agent"""
+        return f"Employee(Role: {self.get_role().title()}, Name: {self.first_name.title()} {self.last_name.title()}, Gender: {self.gender.title()}, Branch: {self.branch.id})"

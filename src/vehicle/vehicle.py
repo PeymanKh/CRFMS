@@ -437,7 +437,7 @@ class Vehicle:
         return self.__maintenance_records.copy()
 
     @maintenance_records.setter
-    def maintenance_records(self, maintenance_records: List[MaintenanceRecord]) -> None:
+    def maintenance_records(self, maintenance_records: List["MaintenanceRecord"]) -> None:
         """
         Setter for maintenance_records property
 
@@ -473,3 +473,7 @@ class Vehicle:
     def move_to_maintenance(self) -> None:
         """Updates the status of the Vehicle to OUT_OF_SERVICE"""
         self.status = VehicleStatus.OUT_OF_SERVICE
+
+    def __str__(self):
+        """String representation of the Vehicle"""
+        return f"Vehicle(id={self.id}, vehicle_class={self.vehicle_class.name}, brand={self.brand}, model={self.model}, color={self.color}, licence_plate={self.licence_plate}, fuel_level={self.fuel_level}, last_service_odometer={self.last_service_odometer}, odometer={self.odometer}, price_per_day={self.price_per_day}, status={self.status.title()})"
