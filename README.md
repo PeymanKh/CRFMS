@@ -25,9 +25,10 @@ The main goal of this project is to create a CRFMS system with respect to SOLID 
     Vehicle (Concrete)
     MaintenanceRecord (Concrete)
     ```
-4. **Reservation, AddOn, and InsuranceTier**: [Reservation](src/reservation/reservation.py), [AddOn](src/reservation/add_on.py), and [InsuranceTier](src/reservation/insurance_tier.py) classes are also normal concrete classes that can be initialized during the run time, I could implement `Decorator design pattern` for this part, but due to time limitations, I could not. But for later development Decorator is a well-suited design pattern for this part of the application.
+4. **Reservation, Invoice, AddOn, and InsuranceTier**: [Reservation](src/reservation/reservation.py), [Invoice](src/reservation/invoice.py), [AddOn](src/reservation/add_on.py), and [InsuranceTier](src/reservation/insurance_tier.py) classes are also normal concrete classes that can be initialized during the run time, I could implement `Decorator design pattern` for this part, but due to time limitations, I could not. But for later development Decorator is a well-suited design pattern for this part of the application.
     ```
     Reservation (Concrete)
+    Invoice (Concrete)
     AddOn (Concrete)
     InsuranceTier (Concrete)
     ```

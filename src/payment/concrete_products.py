@@ -46,15 +46,15 @@ class CreditcardPayment(PaymentInterface):
         self.__expiry = expiry
 
     def validate_payment_details(self) -> bool:
-        print(f"Validating Card ending with {self.__card_number[-4:]}")
+        print(f"from payment product: Validating Card ending with {self.__card_number[-4:]}")
         return True
 
     def process_payment(self, amount: float) -> bool:
-        print(f"Processing ${amount:,} with card ending with {self.__card_number[-4:]}")
+        print(f"from payment product: Processing ${amount:,} with card ending with {self.__card_number[-4:]}")
         return True
 
     def generate_receipt(self, amount: float, success: bool) -> str:
-        status = "successful" if success else "failed"
+        status = "from payment product: successful" if success else "failed"
 
         return f"Payment of ${amount:,} with card ending with {self.__card_number[-4:]} was {status}"
 
@@ -90,11 +90,11 @@ class PayPalPayment(PaymentInterface):
         self.__auth_token = auth_token
 
     def validate_payment_details(self) -> bool:
-        print(f"validating PayPal account with email {self.__email}")
+        print(f"from payment product: Validating PayPal account with email {self.__email}")
         return True
 
     def process_payment(self, amount: float) -> bool:
-        print(f"Processing ${amount:,} with PayPal account {self.__email}")
+        print(f"from payment product: Processing ${amount:,} with PayPal account {self.__email}")
         return False
 
     def generate_receipt(self, amount: float, success: bool) -> str:

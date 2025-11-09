@@ -40,3 +40,11 @@ class ReservationStatus(Enum):
     PICKED_UP = "picked_up"
     CANCELLED = "cancelled"
     COMPLETED = "completed"
+
+
+class InvoiceStatus(Enum):
+    """Invoice status type enumeration."""
+
+    PENDING = "pending"
+    COMPLETED = "completed"
+    FAILED = "failed"
