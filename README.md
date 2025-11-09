@@ -54,4 +54,24 @@ The main goal of this project is to create a CRFMS system with respect to SOLID 
     └── PayPalFactory (Concrete Factory)
     ```
    
-7. **Notification:** For notification system, I have used `Observer design pattern`. This design pattern helped me to design a subscription mechanism to notify different `BaseUsers` about specific events related to them. For notification system I have implemented [NotificationManagerInterface](src/notification/notification_manager_interface.py) which is a blueprint for [NotificationManager](src/notification/notification_manager.py) and can attach, detach, or notify to [Subscribers](src/notification/subscribers.py) that are created from [SubscriberInterface](src/notification/subscriber_interface.py).
+7. **Notification:** For the notification system, I have used `Observer design pattern`. This design pattern helped me to design a subscription mechanism to notify different `BaseUsers` about specific events related to them. For notification system I have implemented [NotificationManagerInterface](src/notification/notification_manager_interface.py) which is a blueprint for [NotificationManager](src/notification/notification_manager.py) and can attach, detach, or notify to [Subscribers](src/notification/subscribers.py) that are created from [SubscriberInterface](src/notification/subscriber_interface.py).
+
+![UML Diagram](uml/uml.png)
+
+
+## 3. Business Rules
+1. All users including `Customers` and `Employees` must be at least 18 years old.
+2. ID of all entities are created automatically and cannot be edited later.
+3. `Customers` can pay for a `Reservation` only if it has been approved by an `Agent`.
+4. Having an `InsuranceTier` for the `Reservation` is mandatory.
+5. Total price of all `Reservations` are calculated automatically using `PricingStrategy` and cannot be modified externally.
+6. For all `Reservations`, an `Invoice` is created automatically with PENDING status.
+
+## 4. How to Run
+1. Create a virtual environment with `python -m venv .venv` and activate it with `source venv/bin/activate`.
+2. Install all dependencies by running `pip install -r requirements.txt`.
+3. Run `python main.py` to start the application.
+
+> Note: [main.py](main.py) is a simple demonstration of the application. It creates a `Branch`, `Customer`, `Agent`, `VehicleClass`, and `Vehicle`. Then the customer created a `Reservation` and the application sends a notification to both customer and the agent, and after agent approves the reservation, customer pays the invoice successfully.
+> To keep main.py clean, I have implemented object creation classes in [utils.py](utils.py) so [main.py](main.py) stays clean with the focus on application logic.
+

@@ -5,11 +5,10 @@ logic to utils.py.
 Author: Peyman Khodabandehlouei
 Date: 09-11-2025
 """
-import utils
 
+import utils
 from datetime import date
 
-from src.enums import InvoiceStatus
 
 if __name__ == "__main__":
     print("-"*20, "Create Branch, Customer, Agent, & Manager", "-"*20,)
@@ -53,6 +52,10 @@ if __name__ == "__main__":
     insurance_tier = utils.create_premium_insurance_tier()
     print("Premium insurance tier:", insurance_tier, "\n")
 
+    print("-" * 20, "Create NotificationManager and Subscribe Customer & Agent", "-" * 20)
+    notification_manager = utils.create_notification_manager()
+    print("")
+
     print("-" * 20, "Reserve the Vehicle", "-" * 20)
 
     # Create a reservation by the user
@@ -67,12 +70,17 @@ if __name__ == "__main__":
     )
     print("Reservation request by customer:", reservation)
 
+    # Send notification to the customer and agent
+    notification_manager.notify()
+
     # Approve the reservation
     agent.approve_reservation(reservation)
-    print("Reservation approved by agent:", reservation)
+    print("Reservation approved by agent:", reservation, "\n")
+
+    print("-" * 20, "Make Payment", "-" * 20)
 
     # Make payment
-    receipt = customer.make_creaditcard_payment(reservation, "1234 1234 1234 1234", "123", "12/30")
+    receipt = customer.make_creditcard_payment(reservation, "1234 1234 1234 1234", "123", "12/30")
     print("Payment receipt:", receipt)
 
     if "successful" in receipt:

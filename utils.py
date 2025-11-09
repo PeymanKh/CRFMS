@@ -17,6 +17,8 @@ from src.reservation.add_on import AddOn
 from src.vehicle.vehicle_class import VehicleClass
 from src.reservation.insurance_tier import InsuranceTier
 
+from src.notification.notification_manager import ConcreteNotificationManager
+from src.notification.subscribers import AgentSubscriber, CustomerSubscriber
 
 def create_test_branch():
     """Creates a test branch"""
@@ -142,3 +144,11 @@ def create_premium_insurance_tier():
     )
 
     return premium_insurance_tier
+
+def create_notification_manager():
+    """Creates a notification manager"""
+    notification_manager = ConcreteNotificationManager()
+    notification_manager.attach(CustomerSubscriber())
+    notification_manager.attach(AgentSubscriber())
+
+    return notification_manager

@@ -280,7 +280,8 @@ class Customer(BaseUser):
         # Update vehicle status to AVAILABLE
         reservation.vehicle.status = VehicleStatus.AVAILABLE
 
-    def make_creaditcard_payment(self, reservation: "Reservation", card_number: str, cvv: str, expiry: str):
+    @staticmethod
+    def make_creditcard_payment(reservation: "Reservation", card_number: str, cvv: str, expiry: str):
         """
         Make payment for a reservation with creditcard.
 
@@ -311,8 +312,36 @@ class Customer(BaseUser):
 
         return receipt
 
+    @staticmethod
+    def make_paypal_payment(reservation: "Reservation", email: str, auth_token: str):
+        """
+        Make payment for a reservation with creditcard.
 
+        Args:
+            reservation (Reservation): Reservation object.
+            email (str): PayPal account email.
+            auth_token (str): PayPal authentication token.
 
+        Raises:
+            TypeError: If reservation is not a Reservation object.
+            ValueError: If reservation status is not APPROVED.
+        """
+        # Validation
+        from src.reservation.reservation import Reservation
+        if not isinstance(reservation, Reservation):
+            raise TypeError("reservation must be a Reservation object.")
+
+        if reservation.status != ReservationStatus.APPROVED:
+            raise ValueError("Only approved reservations can be paid.")
+
+        # Create payment
+        from src.payment.concrete_factories import PaypalPaymentCreator
+        credit_card_payment_service = PaypalPaymentCreator(email=email, auth_token=auth_token)
+
+        # Execute payment
+        receipt = credit_card_payment_service.execute_payment(reservation.total_price)
+
+        return receipt
 
     def get_role(self) -> str:
         """Returns role of the user in the application"""
