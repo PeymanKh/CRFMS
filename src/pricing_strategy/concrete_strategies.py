@@ -91,7 +91,7 @@ class DailyStrategy(Strategy):
 
         # Business logic
         # Calculate rental days
-        rental_days = (return_date - pickup_date).days + 1
+        rental_days = (return_date - pickup_date).days
 
         # Calculate vehicle cost
         vehicle_cost = vehicle.price_per_day * rental_days
@@ -174,7 +174,7 @@ class FirstOrderStrategy(Strategy):
 
         # Business logic
         # Calculate rental days
-        rental_days = (return_date - pickup_date).days + 1
+        rental_days = (return_date - pickup_date).days
 
         # Calculate vehicle cost
         vehicle_cost = vehicle.price_per_day * rental_days
@@ -261,7 +261,7 @@ class LoyaltyStrategy(Strategy):
 
         # Business logic
         # Calculate rental days
-        rental_days = (return_date - pickup_date).days + 1
+        rental_days = (return_date - pickup_date).days
 
         # Calculate vehicle cost
         vehicle_cost = vehicle.price_per_day * rental_days

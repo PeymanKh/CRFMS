@@ -14,11 +14,13 @@ if TYPE_CHECKING:
 
 class CustomerSubscriber(Subscriber):
     """Concrete Subscriber. It notifies students about new assignments"""
-    def update(self, subject: "NotificationManagerInterface"):
+    def update(self, subject: "NotificationManagerInterface") -> str:
         print("From notification manager: Notification sent to the customer")
+        return "Notification sent to the customer"
 
 
 class AgentSubscriber(Subscriber):
     """Concrete Subscriber. It notifies students about new assignments"""
-    def update(self, subject: "NotificationManagerInterface"):
+    def update(self, subject: "NotificationManagerInterface") -> str:
         print("From notification manager: Notification sent to the agent")
+        return "Notification sent to the agent"
