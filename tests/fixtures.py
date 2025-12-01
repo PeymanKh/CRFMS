@@ -1,8 +1,41 @@
 """
 Fixed instances for testing
 
-This module implements instances that can be used in all test functions.
-They are implemented using @pytest.fixture decorator.
+This module defines reusable pytest fixtures that provide ready to use objects for testing.
+Here is a list of the available fixtures:
+- Branch and users:
+    - get_main_branch: Returns a main Branch instance.
+    - get_customer: Returns a sample Customer.
+    - get_active_agent: Returns an active Agent assigned to the main branch.
+    - get_active_manager: Returns an active Manager assigned to the main branch.
+
+- Vehicle classes:
+    - get_economy_vehicle_class: Economy class with low base daily rate and basic features.
+    - get_compact_vehicle_class: Compact class with moderate base daily rate and comfort features.
+    - get_suv_vehicle_class: SUV class with higher base daily rate and family-oriented features.
+
+- Vehicles:
+    - get_economy_vehicle: Sample vehicle with economy class.
+    - get_compact_vehicle: Sample vehicle with compact class.
+    - get_suv_vehicle: Sample vehicle with SUV class.
+
+- Add-ons:
+    - get_gps_addon: GPS navigation add-on.
+    - get_child_seat_addon: Child seat add-on for traveling with toddlers.
+
+- Insurance tiers:
+    - get_basic_insurance_tier: Basic insurance coverage with minimal protection.
+    - get_standard_insurance_tier: Standard insurance coverage including collision.
+    - get_premium_insurance_tier: Premium insurance coverage with extended protection.
+
+- Payments:
+    - get_credit_card_payment_creator: Returns a preconfigured CreditCardPaymentCreator.
+    - get_paypal_payment_creator: Returns a preconfigured PaypalPaymentCreator.
+
+- Notifications:
+    - get_notification_manager: Returns a ConcreteNotificationManager instance.
+    - get_customer_notification_subscriber: Returns a CustomerSubscriber instance.
+    - get_agent_notification_subscriber: Returns an AgentSubscriber instance.
 
 Author: Peyman Khodabandehlouei
 Date: 01-12-2025
@@ -18,6 +51,14 @@ from src.users.manager import Manager
 from src.users.customer import Customer
 from src.vehicle.vehicle_class import VehicleClass
 from src.vehicle.vehicle import Vehicle
+from src.reservation.add_on import AddOn
+from src.reservation.insurance_tier import InsuranceTier
+from src.notification.notification_manager import ConcreteNotificationManager
+from src.notification.subscribers import AgentSubscriber, CustomerSubscriber
+from src.payment.concrete_factories import (
+    CreditCardPaymentCreator,
+    PaypalPaymentCreator,
+)
 
 
 @pytest.fixture
@@ -282,4 +323,108 @@ def get_suv_vehicle(get_suv_vehicle_class, get_main_branch) -> Vehicle:
         odometer=33_000,
         price_per_day=get_suv_vehicle_class.base_daily_rate + 20,
         maintenance_records=[],
+    )
+
+
+@pytest.fixture
+def get_credit_card_payment_creator() -> CreditCardPaymentCreator:
+    return CreditCardPaymentCreator(
+        card_number="1234 1234 1234 1234", cvv="123", expiry="12/30"
+    )
+
+
+@pytest.fixture
+def get_paypal_payment_creator() -> PaypalPaymentCreator:
+    return PaypalPaymentCreator(
+        email="itspeey@gmail.com", auth_token="ABCDEFG123456789"
+    )
+
+
+@pytest.fixture
+def get_notification_manager() -> ConcreteNotificationManager:
+    return ConcreteNotificationManager()
+
+
+@pytest.fixture
+def get_customer_notification_subscriber() -> CustomerSubscriber:
+    return CustomerSubscriber()
+
+
+@pytest.fixture
+def get_agent_notification_subscriber() -> AgentSubscriber:
+    return AgentSubscriber()
+
+
+@pytest.fixture
+def get_gps_addon() -> AddOn:
+    """
+    Returns an AddOn instance for GPS navigation with the following properties:
+        1. Name: GPS Navigation
+        2. Description: In-car GPS navigation system for easier route guidance.
+        3. Price per day: 5.0
+    """
+    return AddOn(
+        name="GPS Navigation",
+        description="In-car GPS navigation system for easier route guidance.",
+        price_per_day=5.0,
+    )
+
+
+@pytest.fixture
+def get_child_seat_addon() -> AddOn:
+    """
+    Returns an AddOn instance for Child Seat with the following properties:
+        1. Name: Child Seat
+        2. Description: Safety-approved child seat suitable for toddlers.
+        3. Price per day: 7.5
+    """
+    return AddOn(
+        name="Child Seat",
+        description="Safety-approved child seat suitable for toddlers.",
+        price_per_day=7.5,
+    )
+
+
+@pytest.fixture
+def get_basic_insurance_tier() -> InsuranceTier:
+    """
+    Returns an InsuranceTier instance for Basic coverage with the following properties:
+        1. Tier name: Basic
+        2. Description: Basic liability coverage with minimal protection.
+        3. Price per day: 5.0
+    """
+    return InsuranceTier(
+        tier_name="Basic",
+        description="Basic liability coverage with minimal protection.",
+        price_per_day=5.0,
+    )
+
+
+@pytest.fixture
+def get_standard_insurance_tier() -> InsuranceTier:
+    """
+    Returns an InsuranceTier instance for Standard coverage with the following properties:
+        1. Tier name: Standard
+        2. Description: Standard coverage including liability and collision protection.
+        3. Price per day: 10.0
+    """
+    return InsuranceTier(
+        tier_name="Standard",
+        description="Standard coverage including liability and collision protection.",
+        price_per_day=10.0,
+    )
+
+
+@pytest.fixture
+def get_premium_insurance_tier() -> InsuranceTier:
+    """
+    Returns an InsuranceTier instance for Premium coverage with the following properties:
+        1. Tier name: Premium
+        2. Description: Premium coverage with extended protection and lower deductibles.
+        3. Price per day: 18.0
+    """
+    return InsuranceTier(
+        tier_name="Premium",
+        description="Premium coverage with extended protection and lower deductibles.",
+        price_per_day=18.0,
     )
