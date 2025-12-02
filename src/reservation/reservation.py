@@ -128,7 +128,7 @@ class Reservation:
         self.__insurance_tier = insurance_tier
         self.__pickup_branch = pickup_branch
         self.__return_branch = return_branch
-        self.__pricing_strategy = PricingStrategy(creator)
+        self.__pricing_strategy = PricingStrategy(customer=creator)  # Adjust pricing strategy dynamically
         self.__pickup_date = pickup_date
         self.__return_date = return_date
         self.__add_ons = add_ons.copy()

@@ -19,6 +19,9 @@ Here is a list of the available fixtures:
     - get_compact_vehicle: Sample vehicle with compact class.
     - get_suv_vehicle: Sample vehicle with SUV class.
 
+- Reservations:
+    - get_reservation: Returns a sample Reservation instance.
+
 - Add-ons:
     - get_gps_addon: GPS navigation add-on.
     - get_child_seat_addon: Child seat add-on for traveling with toddlers.
@@ -42,9 +45,8 @@ Date: 01-12-2025
 """
 
 import pytest
-from datetime import date
+from datetime import date, timedelta
 
-from src.enums import Gender, EmploymentType, VehicleStatus
 from src.branch.branch import Branch
 from src.users.agent import Agent
 from src.users.manager import Manager
@@ -52,13 +54,21 @@ from src.users.customer import Customer
 from src.vehicle.vehicle_class import VehicleClass
 from src.vehicle.vehicle import Vehicle
 from src.reservation.add_on import AddOn
+from src.reservation.reservation import Reservation
 from src.reservation.insurance_tier import InsuranceTier
 from src.notification.notification_manager import ConcreteNotificationManager
 from src.notification.subscribers import AgentSubscriber, CustomerSubscriber
+from src.enums import (
+    Gender,
+    EmploymentType,
+    VehicleStatus,
+    ReservationStatus
+)
 from src.payment.concrete_factories import (
     CreditCardPaymentCreator,
     PaypalPaymentCreator,
 )
+
 
 
 @pytest.fixture
@@ -427,4 +437,35 @@ def get_premium_insurance_tier() -> InsuranceTier:
         tier_name="Premium",
         description="Premium coverage with extended protection and lower deductibles.",
         price_per_day=18.0,
+    )
+
+
+@pytest.fixture
+def get_reservation(get_customer, get_compact_vehicle, get_premium_insurance_tier, get_gps_addon, get_main_branch) -> Reservation:
+    """
+    Returns a Reservation instance with the following properties:
+        1. Status: PENDING
+        2. Creator: get_customer()
+        3. Vehicle: get_compact_vehicle()
+        4. Insurance tier: get_premium_insurance_tier()
+        5. Add-ons: [get_gps_addon()]
+        6. Pickup branch: get_main_branch()
+        7. Return branch: get_main_branch()
+        8. Pickup date: date.today() + timedelta(days=1)
+        9. Return date: date.today() + timedelta(days=3)
+    """
+    # Create date objects for pickup and return dates (Total 3 days)
+    pickup_date = date.today() + timedelta(days=1)
+    return_date = pickup_date + timedelta(days=3)
+
+    return Reservation(
+        status=ReservationStatus.PENDING,
+        creator=get_customer,
+        vehicle=get_compact_vehicle,
+        insurance_tier=get_premium_insurance_tier,
+        add_ons=[get_gps_addon],
+        pickup_branch=get_main_branch,
+        return_branch=get_main_branch,
+        pickup_date=pickup_date,
+        return_date=return_date,
     )

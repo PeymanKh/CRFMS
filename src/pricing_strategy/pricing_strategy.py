@@ -67,16 +67,12 @@ class PricingStrategy:
             raise TypeError("customer must be an instance of Customer class")
 
         # Business logic - Automatic strategy selection
-        completed_reservations = sum(
-            1
-            for reservation in customer.reservations
-            if reservation.status == ReservationStatus.COMPLETED
-        )
+        reservations_count = len(customer.reservations)
 
-        if completed_reservations == 0:
+        if reservations_count == 0:
             # First order - 15% discount
             self.__strategy = FirstOrderStrategy()
-        elif (completed_reservations + 1) % 5 == 0:
+        elif (reservations_count + 1) % 5 == 0:
             # Every 5th order - 10% loyalty discount
             self.__strategy = LoyaltyStrategy()
         else:
