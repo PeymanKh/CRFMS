@@ -58,17 +58,11 @@ from src.reservation.reservation import Reservation
 from src.reservation.insurance_tier import InsuranceTier
 from src.notification.notification_manager import ConcreteNotificationManager
 from src.notification.subscribers import AgentSubscriber, CustomerSubscriber
-from src.enums import (
-    Gender,
-    EmploymentType,
-    VehicleStatus,
-    ReservationStatus
-)
+from src.enums import Gender, EmploymentType, VehicleStatus, ReservationStatus
 from src.payment.concrete_factories import (
     CreditCardPaymentCreator,
     PaypalPaymentCreator,
 )
-
 
 
 @pytest.fixture
@@ -441,7 +435,13 @@ def get_premium_insurance_tier() -> InsuranceTier:
 
 
 @pytest.fixture
-def get_reservation(get_customer, get_compact_vehicle, get_premium_insurance_tier, get_gps_addon, get_main_branch) -> Reservation:
+def get_reservation(
+    get_customer,
+    get_compact_vehicle,
+    get_premium_insurance_tier,
+    get_gps_addon,
+    get_main_branch,
+) -> Reservation:
     """
     Returns a Reservation instance with the following properties:
         1. Status: PENDING
