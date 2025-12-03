@@ -2,6 +2,7 @@
 
 > This project is implementation of a Car Rental & Fleet Management System for advanced python course. I strongly suggest reading this README.md file to fully understand my approach and design system. 
 
+> Note: To read about unittests, please read this [README.md](tests/README.md) file.
 ## 1. Introduction
 The main goal of this project is to create a CRFMS system with respect to SOLID principles and GoF design patterns. *Factory Method*, *Template Method*, *Observer*, and *Strategy* design patterns are used to solve specific architectural challenges. In this document I will explain all entities used in the project, the reason behind my design, and the business rules I have defined.
 

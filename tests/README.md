@@ -16,3 +16,4 @@ This folder contains automated unittests for CRFMS system. The tests are designe
 ## Changes during testing
 1. Pricing Strategies used to only consider completed reservation for discount calculation, but this was a wrong approach, and has been fixed.
 2. Notifications used to print a message on the console, but for unittest they are edited to return a string message.
+3. Vehicle with status != 'available' were reservable, but this was a wrong business logic, and has been fixed. Now when a user wants to reserve an unavailable car, they will get `CarAlreadyReservedError`. 

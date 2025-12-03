@@ -19,6 +19,7 @@ from datetime import date
 from typing import Optional, TYPE_CHECKING
 
 from src.enums import ReservationStatus
+from src.custom_errors import ReturnDateBeforePickupDateError
 
 if TYPE_CHECKING:
     from src.branch.branch import Branch
@@ -102,7 +103,7 @@ class Reservation:
         if not isinstance(return_date, date):
             raise TypeError("return_date must be an instance of date class.")
         if pickup_date > return_date:
-            raise ValueError("pickup_date must be before or equal to return_date.")
+            raise ReturnDateBeforePickupDateError(return_date, pickup_date)
         if pickup_date < date.today():
             raise ValueError("pickup_date cannot be in the past.")
 
@@ -153,7 +154,7 @@ class Reservation:
     @property
     def status(self) -> ReservationStatus:
         """Getter for status property."""
-        return self.__status
+        return self.__status.value
 
     @status.setter
     def status(self, status: ReservationStatus) -> None:
@@ -335,7 +336,7 @@ class Reservation:
         if not isinstance(pickup_date, date):
             raise TypeError("pickup_date must be an instance of date class.")
         if pickup_date > self.__return_date:
-            raise ValueError("pickup_date must be before or equal to return_date.")
+            raise ReturnDateBeforePickupDateError(self.__return_date, pickup_date)
         if pickup_date < date.today():
             raise ValueError("pickup_date cannot be in the past.")
 

@@ -15,6 +15,7 @@ from typing import Any, Optional, List, TYPE_CHECKING
 
 from src.users.base_user import BaseUser
 from src.enums import Gender, ReservationStatus, VehicleStatus
+from src.custom_errors import VehicleNotAvailableError
 
 if TYPE_CHECKING:
     from src.branch.branch import Branch
@@ -123,6 +124,9 @@ class Customer(BaseUser):
             ValueError: If dates violate business constraints.
         """
         from src.reservation.reservation import Reservation
+
+        if vehicle.status != VehicleStatus.AVAILABLE.value:
+            raise VehicleNotAvailableError("This car is already reserved.")
 
         # Change vehicle status to RESERVED
         vehicle.reserve()

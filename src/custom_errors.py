@@ -1,0 +1,9 @@
+class VehicleNotAvailableError(Exception):
+    pass
+
+
+class ReturnDateBeforePickupDateError(Exception):
+    def __init__(self, return_date, pickup_date):
+        super().__init__(
+            f"Return date {return_date} cannot be before pickup date {pickup_date}"
+        )
