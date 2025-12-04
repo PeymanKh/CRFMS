@@ -11,6 +11,7 @@ This folder contains automated unittests for CRFMS system. The tests are designe
       - Customer tries to reserve an available car
       - Customer tries to reserve a vehicle that is already reserved
       - Customer tries to reserve a picked-up vehicle
+      - Customer cancels reservation with different statuses
 
 3. **test_rental_flow**:
 

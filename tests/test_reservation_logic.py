@@ -7,6 +7,10 @@ Here is a list of the available tests:
     2. Reserve a RESERVED vehicle.
     3. Reserve a PICKED_UP vehicle.
     4. Reserve a car with return date before pickup date.
+    5. Cancel a pending reservation.
+    6. Cancel an approved reservation.
+    7. Cancel a completed reservation.
+    9. Cancel a picked-up reservation.
 
 Author: Peyman Khodabandehlouei
 Date: 02-12-2025
@@ -15,10 +19,10 @@ import pytest
 from datetime import date, timedelta
 
 from src.enums import VehicleStatus, ReservationStatus
-from src.custom_errors import ReturnDateBeforePickupDateError, VehicleNotAvailableError
+from src.custom_errors import ReturnDateBeforePickupDateError, VehicleNotAvailableError, InvalidReservationStatusForCancellationError
 
 
-def test_reserve_available_vehicle_success(
+def test_create_reservation_when_vehicle_available_success(
         get_customer,
         get_main_branch,
         get_compact_vehicle,
@@ -46,7 +50,7 @@ def test_reserve_available_vehicle_success(
     assert get_customer.reservations[0].vehicle.status == VehicleStatus.RESERVED.value
 
 
-def test_reserve_reserved_vehicle_failure(
+def test_create_reservation_when_vehicle_reserved_error(
         get_customer,
         get_main_branch,
         get_compact_vehicle,
@@ -74,7 +78,7 @@ def test_reserve_reserved_vehicle_failure(
         )
 
 
-def test_reserve_picked_up_vehicle_failure(
+def test_create_reservation_when_vehicle_pickedup_error(
         get_customer,
         get_main_branch,
         get_compact_vehicle,
@@ -102,7 +106,7 @@ def test_reserve_picked_up_vehicle_failure(
         )
 
 
-def test_return_date_before_pickup_date_failure(
+def test_create_reservation_when_return_date_before_pickup_date_error(
         get_customer,
         get_main_branch,
         get_compact_vehicle,
@@ -128,3 +132,130 @@ def test_return_date_before_pickup_date_failure(
             return_date=return_date,
         )
 
+def test_canceling_pending_reservation_success(
+        get_customer,
+        get_main_branch,
+        get_compact_vehicle,
+        get_gps_addon,
+        get_premium_insurance_tier,
+):
+    # Create date objects for pickup and return dates (Total 3 days)
+    pickup_date = date.today() + timedelta(days=1)
+    return_date = pickup_date + timedelta(days=3)
+
+    # Create reservation
+    get_customer.create_reservation(
+        vehicle=get_compact_vehicle,
+        insurance_tier=get_premium_insurance_tier,
+        add_ons=[get_gps_addon],
+        pickup_branch=get_main_branch,
+        return_branch=get_main_branch,
+        pickup_date=pickup_date,
+        return_date=return_date,
+    )
+
+    # Cancel the reservation
+    reservation = get_customer.reservations[0]
+    get_customer.cancel_reservation(reservation.id)
+
+    assert reservation.status == ReservationStatus.CANCELLED.value
+
+
+def test_canceling_approved_reservation_success(
+        get_customer,
+        get_main_branch,
+        get_compact_vehicle,
+        get_gps_addon,
+        get_premium_insurance_tier,
+):
+    # Create date objects for pickup and return dates (Total 3 days)
+    pickup_date = date.today() + timedelta(days=1)
+    return_date = pickup_date + timedelta(days=3)
+
+    # Create reservation
+    get_customer.create_reservation(
+        vehicle=get_compact_vehicle,
+        insurance_tier=get_premium_insurance_tier,
+        add_ons=[get_gps_addon],
+        pickup_branch=get_main_branch,
+        return_branch=get_main_branch,
+        pickup_date=pickup_date,
+        return_date=return_date,
+    )
+
+    # Approve the reservation
+    reservation = get_customer.reservations[0]
+    reservation.status = ReservationStatus.APPROVED
+
+    # Cancel the reservation
+    get_customer.cancel_reservation(reservation.id)
+
+    assert reservation.status == ReservationStatus.CANCELLED.value
+
+
+def test_canceling_completed_reservation_error(
+        get_customer,
+        get_main_branch,
+        get_compact_vehicle,
+        get_gps_addon,
+        get_premium_insurance_tier,
+):
+    # Create date objects for pickup and return dates (Total 3 days)
+    pickup_date = date.today() + timedelta(days=1)
+    return_date = pickup_date + timedelta(days=3)
+
+    # Create reservation
+    get_customer.create_reservation(
+        vehicle=get_compact_vehicle,
+        insurance_tier=get_premium_insurance_tier,
+        add_ons=[get_gps_addon],
+        pickup_branch=get_main_branch,
+        return_branch=get_main_branch,
+        pickup_date=pickup_date,
+        return_date=return_date,
+    )
+
+    # Approve the reservation
+    reservation = get_customer.reservations[0]
+    reservation.status = ReservationStatus.COMPLETED
+
+    assert reservation.status == ReservationStatus.COMPLETED.value
+
+
+    # Cancel the reservation
+    with pytest.raises(InvalidReservationStatusForCancellationError):
+        get_customer.cancel_reservation(reservation.id)
+
+
+def test_canceling_pickedup_reservation_error(
+        get_customer,
+        get_main_branch,
+        get_compact_vehicle,
+        get_gps_addon,
+        get_premium_insurance_tier,
+):
+    # Create date objects for pickup and return dates (Total 3 days)
+    pickup_date = date.today() + timedelta(days=1)
+    return_date = pickup_date + timedelta(days=3)
+
+    # Create reservation
+    get_customer.create_reservation(
+        vehicle=get_compact_vehicle,
+        insurance_tier=get_premium_insurance_tier,
+        add_ons=[get_gps_addon],
+        pickup_branch=get_main_branch,
+        return_branch=get_main_branch,
+        pickup_date=pickup_date,
+        return_date=return_date,
+    )
+
+    # Approve the reservation
+    reservation = get_customer.reservations[0]
+    reservation.status = ReservationStatus.PICKED_UP
+
+    assert reservation.status == ReservationStatus.PICKED_UP.value
+
+
+    # Cancel the reservation
+    with pytest.raises(InvalidReservationStatusForCancellationError):
+        get_customer.cancel_reservation(reservation.id)

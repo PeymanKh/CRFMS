@@ -14,7 +14,7 @@ Date: 02-12-2025
 from datetime import date, timedelta
 
 
-def test_first_order_pricing_strategy(
+def test_first_order_pricing_strategy_calculations(
     get_customer,
     get_main_branch,
     get_compact_vehicle,
@@ -57,7 +57,7 @@ def test_first_order_pricing_strategy(
     assert reservation.total_price == total_price
 
 
-def test_loyalty_pricing_strategy(
+def test_loyalty_pricing_strategy_calculations(
     get_customer,
     get_main_branch,
     get_compact_vehicle,
@@ -119,7 +119,7 @@ def test_loyalty_pricing_strategy(
     assert last_reservation.total_price == total_price
 
 
-def test_normal_pricing_strategy(
+def test_normal_pricing_strategy_calculations(
     get_customer,
     get_main_branch,
     get_compact_vehicle,

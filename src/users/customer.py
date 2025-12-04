@@ -15,7 +15,7 @@ from typing import Any, Optional, List, TYPE_CHECKING
 
 from src.users.base_user import BaseUser
 from src.enums import Gender, ReservationStatus, VehicleStatus
-from src.custom_errors import VehicleNotAvailableError
+from src.custom_errors import VehicleNotAvailableError, InvalidReservationStatusForCancellationError
 
 if TYPE_CHECKING:
     from src.branch.branch import Branch
@@ -182,14 +182,12 @@ class Customer(BaseUser):
             raise ValueError("Reservation with the given ID is not found.")
 
         # Check if reservation can be canceled
-        if reservation.status == ReservationStatus.CANCELLED:
-            raise ValueError("Reservation is already cancelled.")
-        if reservation.status == ReservationStatus.COMPLETED:
-            raise ValueError("Cannot cancel a completed reservation.")
-        if reservation.status == ReservationStatus.PICKED_UP:
-            raise ValueError(
-                "Cannot cancel an active reservation. Please return the vehicle first."
-            )
+        if reservation.status == ReservationStatus.CANCELLED.value:
+            raise InvalidReservationStatusForCancellationError(reservation.status)
+        if reservation.status == ReservationStatus.COMPLETED.value:
+            raise InvalidReservationStatusForCancellationError(reservation.status)
+        if reservation.status == ReservationStatus.PICKED_UP.value:
+            raise InvalidReservationStatusForCancellationError(reservation.status)
 
         # Cancel the reservation
         reservation.status = ReservationStatus.CANCELLED
