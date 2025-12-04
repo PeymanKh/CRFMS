@@ -45,6 +45,15 @@ This module tests full lifecycle of rental flow, including reservation, approval
 
 ---
 
+### 4. test_maintenance_logic.py
+
+This module tests maintenance logic. Here is the flow:
+1. Agent creates a maintenance record but vehicle is still available for reservation (Based on business logic).
+2. Manager approves the maintenance request and vehicle becomes out of service.
+3. User tries to reserve the vehicle after maintenance but fails due to vehicle status change.
+
+---
+
 ## How to run tests
 1. Navigate to the tests folder using ```cd tests``` command from the root directory`.
 2. Run the command: ```pytest -v```

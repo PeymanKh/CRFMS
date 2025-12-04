@@ -95,7 +95,7 @@ class Agent(Employee):
         return True
 
     @staticmethod
-    def create_maintenance_request(vehicle: "Vehicle", note: Optional[str] =None) -> "MaintenanceRecord":
+    def create_maintenance_request(vehicle: "Vehicle", note: Optional[str] =None) -> None:
         """
         Creates a maintenance request for the car and adds it to its maintenance records
 
@@ -114,11 +114,9 @@ class Agent(Employee):
         if not isinstance(vehicle, Vehicle):
             raise TypeError("vehicle must be a Vehicle object")
 
-        # Create maintenance record
+        # Add maintenance record to vehicle's maintenance records
         from src.vehicle.maintenance_record import MaintenanceRecord
-        maintenance_record = MaintenanceRecord(vehicle=vehicle, note=note)
-
-        return maintenance_record
+        vehicle.add_maintenance_record(MaintenanceRecord(vehicle=vehicle, note=note))
 
     def approve_reservation(self, reservation: "Reservation") -> None:
         """

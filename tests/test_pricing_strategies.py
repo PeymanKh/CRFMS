@@ -6,12 +6,15 @@ Here is a list of the available tests:
     1. First order pricing strategy which gives 15% discount on the first order.
     2. Loyalty pricing strategy which gives 10% discount on every 5th order.
     3. Normal pricing strategy which gives no discount on the first order.
+    4. Parametrized test that verifies first-order, normal, and loyalty pricing with different real-world scenarios.
 
 Author: Peyman Khodabandehlouei
 Date: 02-12-2025
 """
+
 import pytest
 from datetime import date, timedelta
+
 
 def test_first_order_pricing_strategy_calculations(
     get_customer,
@@ -172,8 +175,22 @@ def test_normal_pricing_strategy_calculations(
     "reservations_before, discount_rate",
     [
         ("get_economy_vehicle", "get_basic_insurance_tier", [], 1, 0, 0.15),
-        ("get_compact_vehicle", "get_premium_insurance_tier", ["get_gps_addon"], 3, 1, 0.0),
-        ("get_suv_vehicle", "get_standard_insurance_tier", ["get_gps_addon", "get_gps_addon"], 7, 4, 0.10),
+        (
+            "get_compact_vehicle",
+            "get_premium_insurance_tier",
+            ["get_gps_addon"],
+            3,
+            1,
+            0.0,
+        ),
+        (
+            "get_suv_vehicle",
+            "get_standard_insurance_tier",
+            ["get_gps_addon", "get_gps_addon"],
+            7,
+            4,
+            0.10,
+        ),
     ],
 )
 def test_parametrized_pricing_strategies(

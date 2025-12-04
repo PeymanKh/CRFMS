@@ -474,6 +474,18 @@ class Vehicle:
         """Updates the status of the Vehicle to OUT_OF_SERVICE"""
         self.status = VehicleStatus.OUT_OF_SERVICE
 
+    def add_maintenance_record(self, maintenance_record: "MaintenanceRecord") -> None:
+        """Adds a new maintenance record to the vehicle's maintenance_records list"""
+        # Validation
+        from src.vehicle.maintenance_record import MaintenanceRecord
+        if not isinstance(maintenance_record, MaintenanceRecord):
+            raise TypeError("maintenance_record must be an instance of MaintenanceRecord class")
+        if maintenance_record in self.maintenance_records:
+            raise ValueError("maintenance_record already exists in the list")
+
+
+        self.__maintenance_records.append(maintenance_record)
+
     def __str__(self):
         """String representation of the Vehicle"""
         return f"Vehicle(id={self.id}, vehicle_class={self.vehicle_class.name}, brand={self.brand}, model={self.model}, color={self.color}, licence_plate={self.licence_plate}, fuel_level={self.fuel_level}, last_service_odometer={self.last_service_odometer}, odometer={self.odometer}, price_per_day={self.price_per_day}, status={self.status.title()})"
