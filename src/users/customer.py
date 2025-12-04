@@ -14,8 +14,14 @@ from datetime import date
 from typing import Any, Optional, List, TYPE_CHECKING
 
 from src.users.base_user import BaseUser
-from src.enums import Gender, ReservationStatus, VehicleStatus
-from src.custom_errors import VehicleNotAvailableError, InvalidReservationStatusForCancellationError
+from src.enums import Gender, ReservationStatus, VehicleStatus, InvoiceStatus
+from src.custom_errors import (
+    VehicleNotAvailableError,
+    ReservationNotFoundError,
+    InvalidReservationStatusForCancellationError,
+    PaymentRequiredForPickupError,
+    ReservationNotApprovedError,
+)
 
 if TYPE_CHECKING:
     from src.branch.branch import Branch
@@ -226,11 +232,14 @@ class Customer(BaseUser):
 
         # Check if reservation exists
         if reservation is None:
-            raise ValueError("Reservation with the given ID is not found.")
+            raise ReservationNotFoundError(reservation_id)
 
         # Check if reservation can be picked up
-        if reservation.status != ReservationStatus.APPROVED:
-            raise ValueError("Only confirmed reservations can be picked up.")
+        if reservation.status != ReservationStatus.APPROVED.value:
+            raise ReservationNotApprovedError(reservation_id)
+
+        if reservation.invoice.status != InvoiceStatus.COMPLETED.value:
+            raise PaymentRequiredForPickupError(reservation_id)
 
         # Update reservation status to ACTIVE
         reservation.status = ReservationStatus.PICKED_UP
@@ -273,7 +282,7 @@ class Customer(BaseUser):
             raise ValueError("Reservation with the given ID is not found.")
 
         # Check if vehicle can be returned
-        if reservation.status != ReservationStatus.PICKED_UP:
+        if reservation.status != ReservationStatus.PICKED_UP.value:
             raise ValueError("Only active reservations can be returned.")
 
         # Update reservation status to COMPLETED
@@ -283,7 +292,9 @@ class Customer(BaseUser):
         reservation.vehicle.status = VehicleStatus.AVAILABLE
 
     @staticmethod
-    def make_creditcard_payment(reservation: "Reservation", card_number: str, cvv: str, expiry: str):
+    def make_creditcard_payment(
+        reservation: "Reservation", card_number: str, cvv: str, expiry: str
+    ):
         """
         Make payment for a reservation with creditcard.
 
@@ -299,18 +310,29 @@ class Customer(BaseUser):
         """
         # Validation
         from src.reservation.reservation import Reservation
+
         if not isinstance(reservation, Reservation):
             raise TypeError("reservation must be a Reservation object.")
 
-        if reservation.status != ReservationStatus.APPROVED:
-            raise ValueError("Only approved reservations can be paid.")
+        if reservation.status != ReservationStatus.APPROVED.value:
+            raise ReservationNotApprovedError(reservation.id)
 
         # Create payment
         from src.payment.concrete_factories import CreditCardPaymentCreator
-        credit_card_payment_service = CreditCardPaymentCreator(card_number=card_number, cvv=cvv, expiry=expiry)
+
+        credit_card_payment_service = CreditCardPaymentCreator(
+            card_number=card_number, cvv=cvv, expiry=expiry
+        )
 
         # Execute payment
         receipt = credit_card_payment_service.execute_payment(reservation.total_price)
+
+        # Change invoice status
+        if "successful" in receipt:
+            reservation.invoice.payment_completed()
+
+        else:
+            reservation.invoice.payment_failed()
 
         return receipt
 
@@ -330,18 +352,29 @@ class Customer(BaseUser):
         """
         # Validation
         from src.reservation.reservation import Reservation
+
         if not isinstance(reservation, Reservation):
             raise TypeError("reservation must be a Reservation object.")
 
-        if reservation.status != ReservationStatus.APPROVED:
+        if reservation.status != ReservationStatus.APPROVED.value:
             raise ValueError("Only approved reservations can be paid.")
 
         # Create payment
         from src.payment.concrete_factories import PaypalPaymentCreator
-        credit_card_payment_service = PaypalPaymentCreator(email=email, auth_token=auth_token)
+
+        credit_card_payment_service = PaypalPaymentCreator(
+            email=email, auth_token=auth_token
+        )
 
         # Execute payment
         receipt = credit_card_payment_service.execute_payment(reservation.total_price)
+
+        # Change invoice status
+        if "successful" in receipt:
+            reservation.invoice.payment_completed()
+
+        else:
+            reservation.invoice.payment_failed()
 
         return receipt
 

@@ -89,8 +89,9 @@ class Agent(Employee):
         if not isinstance(vehicle, Vehicle):
             raise TypeError("vehicle must be a Vehicle object")
 
-        if vehicle.status == VehicleStatus.OUT_OF_SERVICE:
+        if vehicle.status == VehicleStatus.OUT_OF_SERVICE or vehicle.status == VehicleStatus.PICKED_UP:
             return False
+
         return True
 
     @staticmethod
@@ -131,6 +132,7 @@ class Agent(Employee):
         """
         # Validation
         from src.reservation.reservation import Reservation
+
         if not isinstance(reservation, Reservation):
             raise TypeError("reservation must be a Reservation object")
 

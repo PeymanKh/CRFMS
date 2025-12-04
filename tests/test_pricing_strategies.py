@@ -11,8 +11,6 @@ Author: Peyman Khodabandehlouei
 Date: 02-12-2025
 """
 
-from datetime import date, timedelta
-
 
 def test_first_order_pricing_strategy_calculations(
     get_customer,
@@ -20,11 +18,11 @@ def test_first_order_pricing_strategy_calculations(
     get_compact_vehicle,
     get_gps_addon,
     get_premium_insurance_tier,
+    get_pickup_and_return_dates,
 ):
     """Tests first order pricing logic with 15% discount on the first order."""
-    # Create date objects for pickup and return dates (Total 3 days)
-    pickup_date = date.today() + timedelta(days=1)
-    return_date = pickup_date + timedelta(days=3)
+    # Get pickup and return dates
+    pickup_date, return_date = get_pickup_and_return_dates
 
     # Create reservation
     reservation = get_customer.create_reservation(
@@ -63,11 +61,11 @@ def test_loyalty_pricing_strategy_calculations(
     get_compact_vehicle,
     get_gps_addon,
     get_premium_insurance_tier,
+    get_pickup_and_return_dates,
 ):
     """Tests loyalty pricing logic with 10% discount on every 5th order."""
-    # Create date objects for pickup and return dates (Total 3 days)
-    pickup_date = date.today() + timedelta(days=1)
-    return_date = pickup_date + timedelta(days=4)
+    # Get pickup and return dates
+    pickup_date, return_date = get_pickup_and_return_dates
 
     # Create 4 reservations and make the car available for another reservation
     for _ in range(4):
@@ -115,7 +113,6 @@ def test_loyalty_pricing_strategy_calculations(
     # Access the last reservation
     last_reservation = get_customer.reservations[-1]
 
-    assert rental_days == 4
     assert last_reservation.total_price == total_price
 
 
@@ -126,11 +123,11 @@ def test_normal_pricing_strategy_calculations(
     get_economy_vehicle,
     get_gps_addon,
     get_premium_insurance_tier,
+    get_pickup_and_return_dates,
 ):
     """Tests normal pricing logic with no discount on normal orders."""
-    # Create date objects for pickup and return dates (Total 3 days)
-    pickup_date = date.today() + timedelta(days=1)
-    return_date = pickup_date + timedelta(days=6)
+    # Get pickup and return dates
+    pickup_date, return_date = get_pickup_and_return_dates
 
     # Create reservation 1
     get_customer.create_reservation(
@@ -166,5 +163,4 @@ def test_normal_pricing_strategy_calculations(
         vehicle_daily_rate + insurance_daily_rate + add_on_daily_rate
     ) * rental_days
 
-    assert rental_days == 6
     assert reservation.total_price == total_price

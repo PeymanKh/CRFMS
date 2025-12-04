@@ -40,12 +40,15 @@ Here is a list of the available fixtures:
     - get_customer_notification_subscriber: Returns a CustomerSubscriber instance.
     - get_agent_notification_subscriber: Returns an AgentSubscriber instance.
 
+- Clock
+    - get_pickup_and_return_dates: Returns a tuple of pickup and return dates for testing.
+
 Author: Peyman Khodabandehlouei
 Date: 01-12-2025
 """
 
 import pytest
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 from src.branch.branch import Branch
 from src.users.agent import Agent
@@ -54,11 +57,11 @@ from src.users.customer import Customer
 from src.vehicle.vehicle_class import VehicleClass
 from src.vehicle.vehicle import Vehicle
 from src.reservation.add_on import AddOn
-from src.reservation.reservation import Reservation
+from src.clock.abstract_clock import AbstractClock
 from src.reservation.insurance_tier import InsuranceTier
 from src.notification.notification_manager import ConcreteNotificationManager
 from src.notification.subscribers import AgentSubscriber, CustomerSubscriber
-from src.enums import Gender, EmploymentType, VehicleStatus, ReservationStatus
+from src.enums import Gender, EmploymentType, VehicleStatus
 from src.payment.concrete_factories import (
     CreditCardPaymentCreator,
     PaypalPaymentCreator,
@@ -432,3 +435,11 @@ def get_premium_insurance_tier() -> InsuranceTier:
         description="Premium coverage with extended protection and lower deductibles.",
         price_per_day=18.0,
     )
+
+
+@pytest.fixture
+def get_pickup_and_return_dates():
+    today_real = date.today()
+    pickup_date = today_real + timedelta(days=1)
+    return_date = pickup_date + timedelta(days=3)
+    return pickup_date, return_date

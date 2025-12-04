@@ -79,7 +79,7 @@ class Invoice:
     @property
     def status(self) -> InvoiceStatus:
         """Getter for status property."""
-        return self.__status
+        return self.__status.value
 
     def payment_completed(self):
         """Updates invoice status to COMPLETED"""

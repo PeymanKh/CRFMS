@@ -15,24 +15,28 @@ Here is a list of the available tests:
 Author: Peyman Khodabandehlouei
 Date: 02-12-2025
 """
+
 import pytest
-from datetime import date, timedelta
 
 from src.enums import VehicleStatus, ReservationStatus
-from src.custom_errors import ReturnDateBeforePickupDateError, VehicleNotAvailableError, InvalidReservationStatusForCancellationError
+from src.custom_errors import (
+    ReturnDateBeforePickupDateError,
+    VehicleNotAvailableError,
+    InvalidReservationStatusForCancellationError,
+)
 
 
 def test_create_reservation_when_vehicle_available_success(
-        get_customer,
-        get_main_branch,
-        get_compact_vehicle,
-        get_gps_addon,
-        get_premium_insurance_tier,
+    get_customer,
+    get_main_branch,
+    get_compact_vehicle,
+    get_gps_addon,
+    get_premium_insurance_tier,
+    get_pickup_and_return_dates
 ):
     """Test reservation of an available vehicle."""
-    # Create date objects for pickup and return dates (Total 3 days)
-    pickup_date = date.today() + timedelta(days=1)
-    return_date = pickup_date + timedelta(days=3)
+    # Get pickup and return dates
+    pickup_date, return_date = get_pickup_and_return_dates
 
     # Create reservation
     get_customer.create_reservation(
@@ -51,16 +55,16 @@ def test_create_reservation_when_vehicle_available_success(
 
 
 def test_create_reservation_when_vehicle_reserved_error(
-        get_customer,
-        get_main_branch,
-        get_compact_vehicle,
-        get_gps_addon,
-        get_premium_insurance_tier,
+    get_customer,
+    get_main_branch,
+    get_compact_vehicle,
+    get_gps_addon,
+    get_premium_insurance_tier,
+    get_pickup_and_return_dates
 ):
     """Test reservation of a reserved vehicle error."""
-    # Create date objects for pickup and return dates (Total 3 days)
-    pickup_date = date.today() + timedelta(days=1)
-    return_date = pickup_date + timedelta(days=3)
+    # Get pickup and return dates
+    pickup_date, return_date = get_pickup_and_return_dates
 
     # Change vehicle status to reserved
     get_compact_vehicle.status = VehicleStatus.RESERVED
@@ -79,16 +83,16 @@ def test_create_reservation_when_vehicle_reserved_error(
 
 
 def test_create_reservation_when_vehicle_pickedup_error(
-        get_customer,
-        get_main_branch,
-        get_compact_vehicle,
-        get_gps_addon,
-        get_premium_insurance_tier,
+    get_customer,
+    get_main_branch,
+    get_compact_vehicle,
+    get_gps_addon,
+    get_premium_insurance_tier,
+    get_pickup_and_return_dates
 ):
     """Test reservation of a reserved vehicle error."""
-    # Create date objects for pickup and return dates (Total 3 days)
-    pickup_date = date.today() + timedelta(days=1)
-    return_date = pickup_date + timedelta(days=3)
+    # Get pickup and return dates
+    pickup_date, return_date = get_pickup_and_return_dates
 
     # Change vehicle status to reserved
     get_compact_vehicle.status = VehicleStatus.PICKED_UP
@@ -107,17 +111,16 @@ def test_create_reservation_when_vehicle_pickedup_error(
 
 
 def test_create_reservation_when_return_date_before_pickup_date_error(
-        get_customer,
-        get_main_branch,
-        get_compact_vehicle,
-        get_gps_addon,
-        get_premium_insurance_tier,
-
+    get_customer,
+    get_main_branch,
+    get_compact_vehicle,
+    get_gps_addon,
+    get_premium_insurance_tier,
+    get_pickup_and_return_dates
 ):
     """Test reservation of a vehicle with return date before pickup date error."""
-    # Create date objects for pickup and return dates (Total 3 days)
-    pickup_date = date.today() + timedelta(days=3)
-    return_date = date.today() + timedelta(days=1)
+    # Get pickup and return dates
+    return_date, pickup_date = get_pickup_and_return_dates
 
     with pytest.raises(ReturnDateBeforePickupDateError):
 
@@ -132,16 +135,18 @@ def test_create_reservation_when_return_date_before_pickup_date_error(
             return_date=return_date,
         )
 
+
 def test_canceling_pending_reservation_success(
-        get_customer,
-        get_main_branch,
-        get_compact_vehicle,
-        get_gps_addon,
-        get_premium_insurance_tier,
+    get_customer,
+    get_main_branch,
+    get_compact_vehicle,
+    get_gps_addon,
+    get_premium_insurance_tier,
+    get_pickup_and_return_dates
 ):
     # Create date objects for pickup and return dates (Total 3 days)
-    pickup_date = date.today() + timedelta(days=1)
-    return_date = pickup_date + timedelta(days=3)
+    # Get pickup and return dates
+    pickup_date, return_date = get_pickup_and_return_dates
 
     # Create reservation
     get_customer.create_reservation(
@@ -162,15 +167,15 @@ def test_canceling_pending_reservation_success(
 
 
 def test_canceling_approved_reservation_success(
-        get_customer,
-        get_main_branch,
-        get_compact_vehicle,
-        get_gps_addon,
-        get_premium_insurance_tier,
+    get_customer,
+    get_main_branch,
+    get_compact_vehicle,
+    get_gps_addon,
+    get_premium_insurance_tier,
+    get_pickup_and_return_dates
 ):
-    # Create date objects for pickup and return dates (Total 3 days)
-    pickup_date = date.today() + timedelta(days=1)
-    return_date = pickup_date + timedelta(days=3)
+    # Get pickup and return dates
+    pickup_date, return_date = get_pickup_and_return_dates
 
     # Create reservation
     get_customer.create_reservation(
@@ -194,15 +199,15 @@ def test_canceling_approved_reservation_success(
 
 
 def test_canceling_completed_reservation_error(
-        get_customer,
-        get_main_branch,
-        get_compact_vehicle,
-        get_gps_addon,
-        get_premium_insurance_tier,
+    get_customer,
+    get_main_branch,
+    get_compact_vehicle,
+    get_gps_addon,
+    get_premium_insurance_tier,
+    get_pickup_and_return_dates
 ):
-    # Create date objects for pickup and return dates (Total 3 days)
-    pickup_date = date.today() + timedelta(days=1)
-    return_date = pickup_date + timedelta(days=3)
+    # Get pickup and return dates
+    pickup_date, return_date = get_pickup_and_return_dates
 
     # Create reservation
     get_customer.create_reservation(
@@ -221,22 +226,21 @@ def test_canceling_completed_reservation_error(
 
     assert reservation.status == ReservationStatus.COMPLETED.value
 
-
     # Cancel the reservation
     with pytest.raises(InvalidReservationStatusForCancellationError):
         get_customer.cancel_reservation(reservation.id)
 
 
 def test_canceling_pickedup_reservation_error(
-        get_customer,
-        get_main_branch,
-        get_compact_vehicle,
-        get_gps_addon,
-        get_premium_insurance_tier,
+    get_customer,
+    get_main_branch,
+    get_compact_vehicle,
+    get_gps_addon,
+    get_premium_insurance_tier,
+    get_pickup_and_return_dates
 ):
-    # Create date objects for pickup and return dates (Total 3 days)
-    pickup_date = date.today() + timedelta(days=1)
-    return_date = pickup_date + timedelta(days=3)
+    # Get pickup and return dates
+    pickup_date, return_date = get_pickup_and_return_dates
 
     # Create reservation
     get_customer.create_reservation(
@@ -254,7 +258,6 @@ def test_canceling_pickedup_reservation_error(
     reservation.status = ReservationStatus.PICKED_UP
 
     assert reservation.status == ReservationStatus.PICKED_UP.value
-
 
     # Cancel the reservation
     with pytest.raises(InvalidReservationStatusForCancellationError):
