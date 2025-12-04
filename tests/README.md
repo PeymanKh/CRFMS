@@ -54,6 +54,15 @@ This module tests maintenance logic. Here is the flow:
 
 ---
 
+### 5. test_notification_manager.py
+
+This module tests notification manager which has been developed using the Observer pattern. here are the tests covered:  
+1. Attach and Detach subscribers test.
+2. Notify subscribers test using mocker.
+3. Customer update notification test.
+4. Agent update notification test.
+---
+
 ## How to run tests
 1. Navigate to the tests folder using ```cd tests``` command from the root directory`.
 2. Run the command: ```pytest -v```
@@ -62,8 +71,8 @@ This module tests maintenance logic. Here is the flow:
 
 ## Changes during testing
 
-1. Add `AbstractClock` to src for unittest.  
-2. Add custom errors to most entities for different scenarios during unittests.  
-3. Pricing strategies used to only consider completed reservation for discount calculation, but this was a wrong approach, and has been fixed.  
-4. Notification service used to print a message on the console, but for unittest they are edited to return a string message.  
-5. Vehicle with `status` != `available` were reservable, but this was a wrong business logic, and has been fixed. Now when a user wants to reserve an unavailable car, they will get `CarAlreadyReservedError`.  
+1. Add custom errors to most entities for different scenarios during unittests.  
+2. Pricing strategies used to only consider completed reservation for discount calculation, but this was a wrong approach, and has been fixed.  
+3. Notification service used to print a message on the console, but for unittest they are edited to return a string message.  
+4. Vehicle with `status` != `available` were reservable, but this was a wrong business logic, and has been fixed. Now when a user wants to reserve an unavailable car, they will get `CarAlreadyReservedError`.  
+5. Vehicle only has setter and getter for its maintenance records, A new method `add_maintenance_record` has been added to the class for adding a new maintenance record.

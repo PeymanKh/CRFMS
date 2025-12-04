@@ -19,12 +19,14 @@ class ConcreteNotificationManager(NotificationManagerInterface):
     def __init__(self):
         self._subscribers: List["Subscriber"] = []
 
+    @property
+    def subscribers(self) -> List["Subscriber"]:
+        return self._subscribers.copy()
+
     def attach(self, subscriber: "Subscriber"):
-        print("Notification Manager: Attached a subscriber.")
         self._subscribers.append(subscriber)
 
     def detach(self, subscriber: "Subscriber"):
-        print("Notification Manager: Detached a subscriber.")
         if subscriber in self._subscribers:
             self._subscribers.remove(subscriber)
 
