@@ -10,7 +10,8 @@ Here is a list of the available tests:
 Author: Peyman Khodabandehlouei
 Date: 02-12-2025
 """
-
+import pytest
+from datetime import date, timedelta
 
 def test_first_order_pricing_strategy_calculations(
     get_customer,
@@ -164,3 +165,71 @@ def test_normal_pricing_strategy_calculations(
     ) * rental_days
 
     assert reservation.total_price == total_price
+
+
+@pytest.mark.parametrize(
+    "vehicle_fixture, insurance_fixture, addon_fixtures, rental_days, "
+    "reservations_before, discount_rate",
+    [
+        ("get_economy_vehicle", "get_basic_insurance_tier", [], 1, 0, 0.15),
+        ("get_compact_vehicle", "get_premium_insurance_tier", ["get_gps_addon"], 3, 1, 0.0),
+        ("get_suv_vehicle", "get_standard_insurance_tier", ["get_gps_addon", "get_gps_addon"], 7, 4, 0.10),
+    ],
+)
+def test_parametrized_pricing_strategies(
+    request,
+    get_customer,
+    get_main_branch,
+    vehicle_fixture,
+    insurance_fixture,
+    addon_fixtures,
+    rental_days,
+    reservations_before,
+    discount_rate,
+):
+    """
+    Parametrized test that verifies first-order, normal, and loyalty
+    pricing by varying how many reservations the customer already has.
+    """
+    vehicle = request.getfixturevalue(vehicle_fixture)
+    insurance = request.getfixturevalue(insurance_fixture)
+    addons = [request.getfixturevalue(name) for name in addon_fixtures]
+
+    # Common pickup/return logic
+    pickup_date = date.today() + timedelta(days=1)
+    return_date = pickup_date + timedelta(days=rental_days)
+
+    # Create N prior reservations to set up the correct strategy
+    for _ in range(reservations_before):
+        get_customer.create_reservation(
+            vehicle=vehicle,
+            insurance_tier=insurance,
+            add_ons=addons,
+            pickup_branch=get_main_branch,
+            return_branch=get_main_branch,
+            pickup_date=pickup_date,
+            return_date=return_date,
+        )
+        # Make vehicle available again
+        vehicle.make_available()
+
+    # This is the reservation we actually assert on
+    reservation = get_customer.create_reservation(
+        vehicle=vehicle,
+        insurance_tier=insurance,
+        add_ons=addons,
+        pickup_branch=get_main_branch,
+        return_branch=get_main_branch,
+        pickup_date=pickup_date,
+        return_date=return_date,
+    )
+
+    # Manual expected price
+    vehicle_daily = vehicle.price_per_day
+    insurance_daily = insurance.price_per_day
+    addons_daily = sum(add_on.price_per_day for add_on in addons)
+
+    subtotal = (vehicle_daily + insurance_daily + addons_daily) * rental_days
+    expected_total = subtotal * (1 - discount_rate)
+
+    assert reservation.total_price == pytest.approx(expected_total)

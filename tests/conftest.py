@@ -57,7 +57,6 @@ from src.users.customer import Customer
 from src.vehicle.vehicle_class import VehicleClass
 from src.vehicle.vehicle import Vehicle
 from src.reservation.add_on import AddOn
-from src.clock.abstract_clock import AbstractClock
 from src.reservation.insurance_tier import InsuranceTier
 from src.notification.notification_manager import ConcreteNotificationManager
 from src.notification.subscribers import AgentSubscriber, CustomerSubscriber
@@ -437,9 +436,9 @@ def get_premium_insurance_tier() -> InsuranceTier:
     )
 
 
+
 @pytest.fixture
-def get_pickup_and_return_dates():
-    today_real = date.today()
-    pickup_date = today_real + timedelta(days=1)
-    return_date = pickup_date + timedelta(days=3)
+def get_pickup_and_return_dates(interval_days: int = 3) -> tuple[datetime, datetime]:
+    pickup_date = date.today() + timedelta(days=1)
+    return_date = pickup_date + timedelta(days=interval_days)
     return pickup_date, return_date
